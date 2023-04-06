@@ -1,4 +1,4 @@
-# project-default-template
+# R-trees
 
 ![Visualization of the repository visualizer diagram](./diagram.svg)
 
