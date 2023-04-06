@@ -55,9 +55,12 @@ public class SinglePoint {
         // display a data store file chooser dialog for shapefiles
         //String filename="../projetinfof203/data/sh_statbel_statistical_sectors_31370_20220101.shp/sh_statbel_statistical_sectors_31370_20220101.shp";
 
-        String filename="../projetinfof203/data/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        //String filename="../projetinfof203/data/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
 
+        //Decompress zip file to get the right file
+        String filename ="src/ressources/sh_statbel_statistical_sectors_20210101.shp";
         //String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
+
 
 
         File file = new File(filename);
@@ -79,7 +82,7 @@ public class SinglePoint {
 
         GeometryBuilder gb = new GeometryBuilder();
         Point p = gb.point(152183, 167679);// Plaine
-        //Point p = gb.point(4.4, 50.8);// 
+        //Point p = gb.point(4.4, 50.8);//
         //Point p = gb.point(58.0, 47.0);
         //Point p = gb.point(10.6,59.9);// Oslo
 
@@ -162,3 +165,4 @@ public class SinglePoint {
         JMapFrame.showMap(map);
     }
 }
+
