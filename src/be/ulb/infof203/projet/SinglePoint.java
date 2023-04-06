@@ -58,7 +58,7 @@ public class SinglePoint {
         //String filename="../projetinfof203/data/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
 
         //Decompress zip file to get the right file
-        String filename ="src/ressources/sh_statbel_statistical_sectors_20210101.shp";
+        //String filename ="src/ressources/sh_statbel_statistical_sectors_20210101.shp";
         //String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
 
 
