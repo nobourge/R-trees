@@ -1,26 +1,37 @@
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+//import org.geotools.geometry.jts.ReferencedEnvelope;
+
+import java.util.logging.Logger;
+
 // Manque certaine méthode voir avec l'énoncé si c'est toutes les méthodes sont cohérentes. Le PIP, je pense que c'est bon
 public class Polygon {
+    private static final Logger logger = org.geotools.util.logging.Logging.getLogger(Polygon.class);
     private List<Point> points;
     private Rectangle MBR;
 
 
     public Polygon(List<Point> points) {
+        logger.fine("Polygon()");
+        logger.info("Polygon created");
         this.points = new ArrayList<>(points);
         this.MBR = calculateMBR();
     }
 
     public List<Point> getPoints() {
+        logger.fine("getPoints()");
         return points;
     }
 
     public void setPoints(List<Point> points) {
+        logger.fine("setPoints()");
         this.points = new ArrayList<>(points);
     }
 
     public double area() {
+        logger.fine("area()");
         int n = points.size();
         double area = 0.0;
         for (int i = 0; i < n; ++i) {
@@ -32,6 +43,7 @@ public class Polygon {
     }
 
     private Rectangle calculateMBR() {
+        logger.fine("calculateMBR()");
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
@@ -58,14 +70,15 @@ public class Polygon {
 
 
     public static boolean PIP(Point point, Polygon polygon) {
+        logger.fine("PIP()");
         int count = 0;
         List<Point> vertices = polygon.getPoints();
         int n = vertices.size();
         Point p1 = vertices.get(0);
         for (int i = 1; i <= n; i++) {
             Point p2 = vertices.get(i % n);
-            if (point.getY() > Math.min(p1.getY(), p2.getY())) {
-                if (point.getY() <= Math.max(p1.getY(), p2.getY())) {
+            if (point.getY() > Math.min(p1.getY(), p2.getY())) { // todo if values are equal, it should not return null
+                if (point.getY() <= Math.max(p1.getY(), p2.getY())) {  // todo if values are equal, it should not return null
                     if (point.getX() <= Math.max(p1.getX(), p2.getX())) {
                         if (p1.getY() != p2.getY()) {
                             double xIntersection = (point.getY() - p1.getY()) * (p2.getX() - p1.getX()) / (p2.getY() - p1.getY()) + p1.getX();
@@ -82,6 +95,7 @@ public class Polygon {
     }
 
     public Rectangle getMBR() {
+        logger.fine("getMBR()");
         return this.MBR;
     }
 }

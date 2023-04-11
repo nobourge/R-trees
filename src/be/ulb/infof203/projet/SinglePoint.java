@@ -19,6 +19,10 @@ import org.geotools.map.MapContent;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import org.locationtech.jts.geom.MultiPolygon;
 
 import org.locationtech.jts.geom.Point;
@@ -34,10 +38,10 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 
+import java.util.Objects;
 import java.util.Random;
 
 import org.geotools.swing.JMapFrame;
-
 
 /**
  * Prompts the user for a shapefile and displays the contents on the screen in a map frame.
@@ -45,23 +49,25 @@ import org.geotools.swing.JMapFrame;
  * <p>This is the GeoTools Quickstart application used in documentation a and tutorials. *
  */
 public class SinglePoint {
-
-
     /**
      * GeoTools Quickstart demo application. Prompts the user for a shapefile and displays its
      * contents on the screen in a map frame
      */
-    public static void main(String[] args) throws Exception {
-        // display a data store file chooser dialog for shapefiles
-        //String filename="../projetinfof203/data/sh_statbel_statistical_sectors_31370_20220101.shp/sh_statbel_statistical_sectors_31370_20220101.shp";
+//    private static final Log LOGGER = org.geotools.util.logging.Logging.getLogger(SinglePoint.class);
+//    private static final Logger LOGGER = org.geotools.util.logging.LogbackLoggerFactory(SinglePoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SinglePoint.class);
 
-        //String filename="../projetinfof203/data/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+     public static void main(String[] args) throws Exception {
+         LOGGER.debug("main()");
+
+        // display a data store file chooser dialog for shapefiles
+//        String filename="src/be/ulb/infof203/projet/WB_countries_Admin0_10m.shp";
 
         //Decompress zip file to get the right file
-        //String filename ="src/ressources/sh_statbel_statistical_sectors_20210101.shp";
+//        String filename ="src/ressources/sh_statbel_statistical_sectors_20210101.shp";
+        String filename ="resources/sh_statbel_statistical_sectors_20210101.shp";
+
         //String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
-
-
 
         File file = new File(filename);
         if (!file.exists())
@@ -76,12 +82,14 @@ public class SinglePoint {
 
         ReferencedEnvelope global_bounds = featureSource.getBounds();
 
-
-        Random r = new Random();
-
+//        Random r = new Random();
 
         GeometryBuilder gb = new GeometryBuilder();
+        LOGGER.info("Global bounds: "+global_bounds);
         Point p = gb.point(152183, 167679);// Plaine
+         LOGGER.info("Point: "+p);
+         LOGGER.debug("Point: "+p);
+
         //Point p = gb.point(4.4, 50.8);//
         //Point p = gb.point(58.0, 47.0);
         //Point p = gb.point(10.6,59.9);// Oslo
@@ -90,7 +98,6 @@ public class SinglePoint {
         //Point p = gb.point(169.2, -52.5);//NZ
 
         //Point p = gb.point(172.97365198326708, 1.8869725782923172);
-
 
 //        Point p = gb.point(r.nextInt((int) global_bounds.getMinX()
 //                                   , (int) global_bounds.getMaxX())
@@ -119,7 +126,7 @@ public class SinglePoint {
 
         else {
             for(Property prop: target.getProperties()) {
-                if (prop.getName().toString() != "the_geom") {
+                if (!Objects.equals(prop.getName().toString(), "the_geom")) {
                     System.out.println(prop.getName()+": "+prop.getValue());
                 }
             }
