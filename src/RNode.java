@@ -35,7 +35,16 @@ public class RNode extends Node{
 
         children = new ArrayList<>();
         polygons = new ArrayList<>();
-        MBR = new Rectangle();
+//        mbr = new Rectangle();
+        Polygon polygon = new Polygon();
+        Envelope envelope = polygon.getEnvelopeInternal();
+
+        mbr = new Envelope(Double.POSITIVE_INFINITY
+                ,Double.POSITIVE_INFINITY
+                ,Double.POSITIVE_INFINITY
+                ,Double.POSITIVE_INFINITY
+        ); // Envelope' is abstract; cannot be instantiated
+
     }
 
     public List<Node> getChildren() {
