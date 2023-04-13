@@ -3,7 +3,7 @@ import org.locationtech.jts.geom.Envelope;
 
 import java.util.logging.Logger;
 
-public class RLeaf {
+public class RLeaf extends Node {
     private static final Logger logger = org.geotools.util.logging.Logging.getLogger(RLeaf.class);
     private Polygon polygon;
     private Envelope mbr;
@@ -21,6 +21,7 @@ public class RLeaf {
         return this.polygon;
     }
 
+    @Override
     public Envelope getMBR() {
         logger.fine("getMBR()");
         return this.mbr;
