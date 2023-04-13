@@ -1,12 +1,6 @@
+import org.geotools.geometry.jts.ReferencedEnvelope;
 
-//import org.locationtech.jts.geom.Polygon;
-
-import org.opengis.geometry.Envelope;
-
-import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.List;
-
 import java.util.logging.Logger;
 
 
@@ -26,45 +20,26 @@ public class RNode extends Node{
 
     //list of children of type RNode or RLeaf:
     private List<Node> children;
-    private List<Polygon> polygons; //
-    private Rectangle mbr; // Minimum Bounding Rectangle
-//    private Envelope mbr; // Minimum Bounding Rectangle
+    //    private int maxChildren;
+    //    private int minChildren;
+    private ReferencedEnvelope mbr; // Minimum Bounding Rectangle
 
-    public RNode() {
+    public RNode(List<Node> children) {
         logger.fine("RNode()");
+    //        this.maxChildren = 4;
+    //        this.minChildren = 2;
 
-        children = new ArrayList<>();
-        polygons = new ArrayList<>();
-//        mbr = new Rectangle();
-        Polygon polygon = new Polygon();
-        Envelope envelope = polygon.getEnvelopeInternal();
-
-        mbr = new Envelope(Double.POSITIVE_INFINITY
-                ,Double.POSITIVE_INFINITY
-                ,Double.POSITIVE_INFINITY
-                ,Double.POSITIVE_INFINITY
-        ); // Envelope' is abstract; cannot be instantiated
+        this.children = children;
+        updateMBR();
 
     }
 
-    public List<Node> getChildren() {
-        logger.fine("getChildren()");
-        return children;
-    }
-
-    public List<Polygon> getPolygons() {
-        logger.fine("getPolygons()");
-        return polygons;
-    }
-
-    @Override
-    public Rectangle getMBR() {
-//    public Envelope getMBR() {
-        logger.fine("getMBR()");
-        return mbr;
 
 
-    }
+//    public List<Polygon> getPolygons() {
+//        logger.fine("getPolygons()");
+//        return polygons;
+//    }
 
     public void addChild(Node child) {
         logger.fine("addChild()");
@@ -77,11 +52,11 @@ public class RNode extends Node{
         updateMBR();
     }
 
-    public void addPolygon(Polygon polygon) {
-        logger.fine("addPolygon()");
-        polygons.add(polygon);
-        updateMBR();
-    }
+//    public void addPolygon(Polygon polygon) {
+//        logger.fine("addPolygon()");
+//        polygons.add(polygon);
+//        updateMBR();
+//    }
 
     public void removeChild(RNode child) {
         logger.fine("removeChild()");
@@ -89,23 +64,25 @@ public class RNode extends Node{
         updateMBR();
     }
 
-    public void removePolygon(Polygon polygon) {
-        logger.fine("removePolygon()");
-        polygons.remove(polygon);
-        updateMBR();
-    }
+//    public void removePolygon(Polygon polygon) {
+//        logger.fine("removePolygon()");
+//        polygons.remove(polygon);
+//        updateMBR();
+//    }
 
     private void updateMBR() {
         logger.fine("updateMBR()");
-        mbr = new Rectangle();
-        for (Node child : children) {
-            mbr = mbr.union(child.getMBR());
-        }
-        for (Polygon polygon : polygons) {
-            mbr = mbr.union(polygon.getMBR());
-        }
-    }
 
-    public void expandMbr(Polygon polygon) {
+        if (children.size() == 0) {
+            mbr = null;
+            return;
+        }
+
+        mbr = children.get(0).getMBR();
+        for (Node child : children) {
+            ReferencedEnvelope childMBR = child.getMBR();
+            //
+            mbr.expandToInclude(childMBR);
+        }
     }
 }

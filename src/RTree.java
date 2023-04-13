@@ -1,4 +1,10 @@
+
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.MultiPolygon;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 public class RTree {
@@ -26,13 +32,14 @@ public class RTree {
     //(6) All leaves appear on the same level.
 
     private static final Logger logger = LoggerFactory.getLogger(RTree.class);
-    private RNode root;
-    private int maxChildren;
-    private int minChildren;
+    private Node root;
+
     private int maxDepth;
     private int minDepth;
     private int depth;
     private int size;
+    private int maxChildren;
+    private int minChildren;
     private int leafSize;
     private int nodeSize;
     private int maxLeafSize;
@@ -47,11 +54,9 @@ public class RTree {
     //main constructor
     public RTree(int maxChildren, int minChildren, int maxDepth, int minDepth) {
         logger.debug("RTree()");
-        this.maxChildren = maxChildren;
-        this.minChildren = minChildren;
         this.maxDepth = maxDepth;
         this.minDepth = minDepth;
-        this.root = new RNode();
+        this.root = new Node();
         this.depth = 0;
         this.size = 0;
         this.leafSize = 0;
@@ -63,26 +68,6 @@ public class RTree {
         this.maxTreeSize = 0;
         this.minTreeSize = 0;
 
-    }
-
-    //constructor for testing purposes
-    public RTree(int maxChildren, int minChildren, int maxDepth, int minDepth, int maxLeafSize, int minLeafSize, int maxNodeSize, int minNodeSize, int maxTreeSize, int minTreeSize) {
-        logger.debug("RTree()");
-        this.maxChildren = maxChildren;
-        this.minChildren = minChildren;
-        this.maxDepth = maxDepth;
-        this.minDepth = minDepth;
-        this.root = new RNode();
-        this.depth = 0;
-        this.size = 0;
-        this.leafSize = 0;
-        this.nodeSize = 0;
-        this.maxLeafSize = maxLeafSize;
-        this.minLeafSize = minLeafSize;
-        this.maxNodeSize = maxNodeSize;
-        this.minNodeSize = minNodeSize;
-        this.maxTreeSize = maxTreeSize;
-        this.minTreeSize = minTreeSize;
     }
 
     //insertion (addLeaf) : si, après ajout d’une nouvelle feuille, le nombre de feuilles
@@ -108,19 +93,19 @@ public class RTree {
             //else :
                 //return null
 
-    public RNode addLeaf(RNode rnode, String label, Polygon polygon) {
+    public Node addLeaf(Node rnode, String label, Polygon polygon) {
         logger.debug("addLeaf()");
         if (rnode.getChildren().size() == 0 || rnode.getChildren().get(0) instanceof RLeaf) {
             rnode.getChildren().add(new RLeaf(polygon, label));
         } else {
             RNode node = chooseNode(rnode, polygon);
-            RNode new_node = addLeaf(node, label, polygon);
+            Node new_node = addLeaf(node, label, polygon);
             if (new_node != null) {
                 rnode.getChildren().add(new_node);
 //                rnode.updateMBR(polygon);
             }
             if (rnode.getChildren().size() >= maxChildren) {
-                return splitQuadratic(rnode);
+                return splitQuadratic(node);
 //                return splitLinear(rnode);
             } else {
                 return null;
@@ -161,7 +146,7 @@ public class RTree {
         return null;
     }
 
-    private RNode chooseNode(RNode rnode, Polygon polygon){
+    private RNode chooseNode(Node rnode, Polygon polygon){
         // todo
         return null;
     }
@@ -195,4 +180,7 @@ public class RTree {
     }
 
 
+    public Node getRoot() {
+        return root;
+    }
 }

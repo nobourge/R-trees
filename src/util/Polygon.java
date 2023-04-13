@@ -1,3 +1,8 @@
+package util;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.geometry.Envelope;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +16,15 @@ public class Polygon {
 
     private static final Logger logger = org.geotools.util.logging.Logging.getLogger(Polygon.class);
     private List<Point> points;
-    private Rectangle MBR;
+//    private Rectangle MBR;
+//    private Envelope2D MBR;
+//    private Envelope MBR;
+    private ReferencedEnvelope MBR;
 
 
     public Polygon(List<Point> points) {
-        logger.fine("Polygon()");
-        logger.info("Polygon created");
+        logger.fine("util.Polygon()");
+        logger.info("util.Polygon created");
         this.points = new ArrayList<>(points);
         this.MBR = calculateMBR();
     }
@@ -43,7 +51,10 @@ public class Polygon {
         return Math.abs(area) / 2.0;
     }
 
-    private Rectangle calculateMBR() {
+//    private Rectangle calculateMBR() {
+    private ReferencedEnvelope calculateMBR() {
+//    private Envelope2D calculateMBR() {
+//    private Envelope calculateMBR() {
         logger.fine("calculateMBR()");
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
@@ -65,7 +76,8 @@ public class Polygon {
             }
         }
 
-        return new Rectangle((int) minX, (int) minY, (int) (maxX - minX), (int) (maxY - minY));
+//        return new Rectangle((int) minX, (int) minY, (int) (maxX - minX), (int) (maxY - minY));
+        return null;
     }
 
 
@@ -95,7 +107,8 @@ public class Polygon {
         return count % 2 != 0;
     }
 
-    public Rectangle getMBR() {
+//    public Rectangle getMBR() {
+    public ReferencedEnvelope getMBR() {
         logger.fine("getMBR()");
         return this.MBR;
     }

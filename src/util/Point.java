@@ -1,3 +1,5 @@
+package util;
+
 import java.util.logging.Logger;
 
 public class Point {
@@ -8,11 +10,11 @@ public class Point {
 
     public Point(double x, double y) {
         this(x, y, 0.0);
-        logger.fine("Point(x, y)");
+        logger.fine("util.Point(x, y)");
     }
 
     public Point(double x, double y, double z) {
-        logger.fine("Point(x, y, z)");
+        logger.fine("util.Point(x, y, z)");
         this.x = x;
         this.y = y;
         this.z = z;

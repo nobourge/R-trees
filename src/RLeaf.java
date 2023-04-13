@@ -29,12 +29,6 @@ public class RLeaf extends Node {
         return this.polygon;
     }
 
-    @Override
-//    public Envelope getMBR() {
-    public Rectangle getMBR() {
-        logger.fine("getMBR()");
-        return this.mbr;
-    }
 
     public String getLabel() {
         logger.fine("getLabel()");
