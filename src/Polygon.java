@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 // Manque certaine méthode voir avec l'énoncé si c'est toutes les méthodes sont cohérentes. Le PIP, je pense que c'est bon
 public class Polygon {
+
     private static final Logger logger = org.geotools.util.logging.Logging.getLogger(Polygon.class);
     private List<Point> points;
     private Rectangle MBR;

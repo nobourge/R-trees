@@ -1,6 +1,8 @@
 
 //import org.locationtech.jts.geom.Polygon;
 
+import org.opengis.geometry.Envelope;
+
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,8 @@ public class RNode extends Node{
     //list of children of type RNode or RLeaf:
     private List<Node> children;
     private List<Polygon> polygons; //
-    private Rectangle MBR; // Minimum Bounding Rectangle
+    private Rectangle mbr; // Minimum Bounding Rectangle
+//    private Envelope mbr; // Minimum Bounding Rectangle
 
     public RNode() {
         logger.fine("RNode()");
@@ -45,9 +48,13 @@ public class RNode extends Node{
         return polygons;
     }
 
+    @Override
     public Rectangle getMBR() {
+//    public Envelope getMBR() {
         logger.fine("getMBR()");
-        return MBR;
+        return mbr;
+
+
     }
 
     public void addChild(Node child) {
@@ -81,12 +88,12 @@ public class RNode extends Node{
 
     private void updateMBR() {
         logger.fine("updateMBR()");
-        MBR = new Rectangle();
+        mbr = new Rectangle();
         for (Node child : children) {
-            MBR = MBR.union(child.getMBR());
+            mbr = mbr.union(child.getMBR());
         }
         for (Polygon polygon : polygons) {
-            MBR = MBR.union(polygon.getMBR());
+            mbr = mbr.union(polygon.getMBR());
         }
     }
 
