@@ -99,4 +99,7 @@ public class RNode extends Node{
     }
 
 
+    public void setMBR(ReferencedEnvelope childEnvelope) {
+        this.mbr = childEnvelope;
+    }
 }

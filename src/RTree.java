@@ -236,12 +236,43 @@ public class RTree {
         //enlarged least.
         //We now turn to algorithms for tioning the set of M+1 entries into two
         //groups, one for each new node.
-        return null;
+        int numChildren = rnode.getChildren().size();
+        int midIndex = numChildren / 2;
+
+        List<Node> newChildren = new ArrayList<>();
+        for (int i = midIndex; i < numChildren; i++){
+            newChildren.add(rnode.getChildren().get(i));
+        }
+        rnode.getChildren().subList(midIndex, numChildren).clear();
+        RNode newNode = new RNode(newChildren);
+
+        for (int i=0; i < rnode.getChildren().size();i++){
+            rnode.getMBR().expandToInclude(rnode.getChildren().get(i).getMBR());
+        }
+        for (int i=0; i < newNode.getChildren().size(); i++){
+            newNode.getMBR().expandToInclude(newNode.getChildren().get(i).getMBR());
+        }
+    return newNode;
     }
 
     private RNode chooseNode(Node rnode, Polygon polygon){
-        // todo
-        return null;
+        logger.debug("chooseNode()");
+        double minArea = Double.POSITIVE_INFINITY;
+        RNode result = null;
+        for (Node node : rnode.getChildren()) {
+            ReferencedEnvelope nodeEnvelope = node.getMBR();
+            Polygon nodePolygon = convertToPolygon(nodeEnvelope);
+            if (nodePolygon.contains(polygon)) {
+                return (RNode) node;
+            } else {
+                double area = nodeEnvelope.intersection(convertToEnvelope(polygon)).getArea();
+                if (area < minArea) {
+                    minArea = area;
+                    result = (RNode) node;
+                }
+            }
+        }
+        return result;
     }
     private RNode chooseLeaf(RNode rnode, RLeaf leaf) {
         // Algorithm ChooseLeaf.
@@ -263,10 +294,36 @@ public class RTree {
         //N to be the child node pointed to by
         //F.p and repeat from CL2
 
-
-        return null;
+        logger.debug("chooseLeaf()");
+        double minEnlargement = Double.POSITIVE_INFINITY;
+        RLeaf result = null;
+        for (Node node : rnode.getChildren()) {
+            ReferencedEnvelope nodeEnvelope = node.getMBR();
+            ReferencedEnvelope expandedEnvelope = nodeEnvelope.expandToInclude(leaf.getMBR());
+            double enlargement = expandedEnvelope.getArea() - nodeEnvelope.getArea();
+            if (enlargement < minEnlargement) {
+                minEnlargement = enlargement;
+                result = (RLeaf) node;
+            } else if (enlargement == minEnlargement && result != null) {
+                if (nodeEnvelope.intersection(leaf.getMBR()).getArea() < result.getMBR().intersection(leaf.getMBR()).getArea()) {
+                    result = (RLeaf) node;
+                }
+            }
+        }
+        return result;
     }
 
+    public ReferencedEnvelope expandToInclude(ReferencedEnvelope other) {
+        if (other == null) {
+            return new ReferencedEnvelope(this);
+        }
+
+        double xmin = Math.min(this.getMinX(), other.getMinX());
+        double ymin = Math.min(this.getMinY(), other.getMinY());
+        double xmax = Math.max(this.getMaxX(), other.getMaxX());
+        double ymax = Math.max(this.getMaxY(), other.getMaxY());
+        return new ReferencedEnvelope(xmin, xmax, ymin, ymax, this.getCoordinateReferenceSystem());
+    }
 
     private void splitNode(int mode, RNode node) {
         // todo
