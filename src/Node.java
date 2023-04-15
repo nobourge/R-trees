@@ -3,9 +3,13 @@ import org.locationtech.jts.geom.Envelope;
 
 import java.awt.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Node {
+    private static final Logger logger = org.geotools.util.logging.Logging.getLogger(Node.class);
+
     private List<Node> children;
+    private Node parent;
 
     public Node() {
         this.children = null;
@@ -22,5 +26,15 @@ public class Node {
 
     public List<Node> getChildren() {
         return children;
+    }
+
+    public Node getParent() {
+        logger.fine("getParent()");
+        return parent;
+    }
+
+    public void setParent(Node parent) {
+        logger.fine("setParent()");
+        this.parent = parent;
     }
 }

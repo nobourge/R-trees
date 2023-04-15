@@ -20,6 +20,8 @@ public class RNode extends Node{
 
     //list of children of type RNode or RLeaf:
     private List<Node> children;
+    private RNode parent;
+
     //    private int maxChildren;
     //    private int minChildren;
     private ReferencedEnvelope mbr; // Minimum Bounding Rectangle
@@ -44,8 +46,18 @@ public class RNode extends Node{
     public void addChild(Node child) {
         logger.fine("addChild()");
         children.add(child);
+        child.setParent(this);
         updateMBR();
     }
+
+    public void setParent(RNode parent) {
+        this.parent = parent;
+    }
+
+    public RNode getParent() {
+        return parent;
+    }
+
     public void addLeaf(RLeaf leaf) {
         logger.fine("addLeaf()");
         children.add(leaf);
@@ -70,7 +82,7 @@ public class RNode extends Node{
 //        updateMBR();
 //    }
 
-    private void updateMBR() {
+    void updateMBR() {
         logger.fine("updateMBR()");
 
         if (children.size() == 0) {
@@ -85,4 +97,6 @@ public class RNode extends Node{
             mbr.expandToInclude(childMBR);
         }
     }
+
+
 }

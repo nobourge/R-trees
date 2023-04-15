@@ -7,6 +7,11 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class RTree {
     // (1) Every leaf node contains between m
     //and M index records unless it is the
@@ -115,7 +120,95 @@ public class RTree {
     }
 
     private RNode splitQuadratic(RNode rnode) {
-        return null;
+        logger.debug("splitQuadratic()");
+
+        List<Node> children = rnode.getChildren();
+        int numChildren = children.size();
+
+        if (numChildren <= 1) {
+            return null;
+        }
+
+        Node[] seeds = pickSeeds(children);
+
+        RNode node1 = new RNode(Collections.singletonList(seeds[0]));
+        RNode node2 = new RNode(Collections.singletonList(seeds[1]));
+
+        children.remove(seeds[0]);
+        children.remove(seeds[1]);
+
+        while (!children.isEmpty()) {
+            if (node1.getChildren().size() + children.size() == minChildren) {
+                for (Node child : children) {
+                    node1.addChild(child);
+                }
+                children.clear();
+                break;
+            } else if (node2.getChildren().size() + children.size() == minChildren) {
+                for (Node child : children) {
+                    node2.addChild(child);
+                }
+                children.clear();
+                break;
+            }
+
+            double cost1 = quadraticCost(node1, children);
+            double cost2 = quadraticCost(node2, children);
+
+            if (cost1 < cost2) {
+                node1.addChild(children.remove(0));
+            } else {
+                node2.addChild(children.remove(0));
+            }
+        }
+
+        node1.updateMBR();
+        node2.updateMBR();
+
+        RNode parent = rnode.getParent();
+
+        if (parent == null) {
+            parent = new RNode(new ArrayList<>());
+            parent.addChild(node1);
+            parent.addChild(node2);
+            return parent;
+        } else {
+            parent.removeChild(rnode);
+            parent.addChild(node1);
+            parent.addChild(node2);
+            if (parent.getChildren().size() > maxChildren) {
+                splitNode(mode, parent);
+            }
+            return null;
+        }
+    }
+
+    private Node[] pickSeeds(List<Node> children) {
+        Node[] seeds =new Node[2];
+        double maxDistance = 0.0;
+        for (int i = 0; i < children.size(); i++) {
+            for (int j = i + 1 ; j < children.size(); j++) {
+                double distance = children.get(i).getMBR().distance(children.get(j).getMBR());
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    seeds[0] = children.get(i);
+                    seeds[1] = children.get(j);
+                }
+            }
+        }
+        return seeds;
+    }
+
+    private  double quadraticCost(RNode node, List<Node> children) {
+        ReferencedEnvelope mbr = node.getMBR();
+        double area = mbr.getArea();
+
+        ReferencedEnvelope union = mbr;
+        for (Node child : children) {
+            union.expandToInclude(child.getMBR());
+        }
+        double enlargedArea = union.getArea();
+        return enlargedArea - area;
     }
 
     private RNode splitLinear(RNode rnode) {
