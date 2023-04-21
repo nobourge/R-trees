@@ -1,9 +1,13 @@
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Polygon;
 
 import java.awt.*;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static org.geotools.geometry.jts.JTS.toGeometry;
+
 
 public class Node {
     private static final Logger logger = org.geotools.util.logging.Logging.getLogger(Node.class);
@@ -16,6 +20,7 @@ public class Node {
     }
 //    private Envelope mbr;
     private ReferencedEnvelope mbr;
+    private Polygon polygon=null;
 //    private Rectangle mbr;
 
 //    protected Envelope getMBR() {
@@ -36,5 +41,13 @@ public class Node {
     public void setParent(Node parent) {
         logger.fine("setParent()");
         this.parent = parent;
+    }
+
+    public Polygon getPolygon() {
+        if (polygon == null) {
+//            return mbr.toGeometry();
+            return toGeometry(mbr);
+        }
+        return polygon;
     }
 }

@@ -1,16 +1,18 @@
-
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.MultiPolygon;
-
-import org.geotools.geometry.jts.ReferencedEnvelope;
-
+import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static org.geotools.geometry.jts.JTS.toEnvelope;
 
 public class RTree {
     // (1) Every leaf node contains between m
@@ -61,6 +63,8 @@ public class RTree {
         logger.debug("RTree()");
         this.maxDepth = maxDepth;
         this.minDepth = minDepth;
+        this.maxChildren = maxChildren;
+        this.minChildren = minChildren;
         this.root = new Node();
         this.depth = 0;
         this.size = 0;
@@ -98,7 +102,9 @@ public class RTree {
             //else :
                 //return null
 
-    public Node addLeaf(Node rnode, String label, Polygon polygon) {
+    public Node addLeaf(Node rnode
+            , String label
+            , Polygon polygon) {
         logger.debug("addLeaf()");
         if (rnode.getChildren().size() == 0 || rnode.getChildren().get(0) instanceof RLeaf) {
             rnode.getChildren().add(new RLeaf(polygon, label));
@@ -256,25 +262,29 @@ public class RTree {
     }
 
     private RNode chooseNode(Node rnode, Polygon polygon){
+//    private RNode chooseNode(Node rnode, ReferencedEnvelope ToInsertEnvelope){
         logger.debug("chooseNode()");
         double minArea = Double.POSITIVE_INFINITY;
         RNode result = null;
-        for (Node node : rnode.getChildren()) {
-            ReferencedEnvelope nodeEnvelope = node.getMBR();
-            Polygon nodePolygon = convertToPolygon(nodeEnvelope);
-            if (nodePolygon.contains(polygon)) {
-                return (RNode) node;
+        for (Node childNode : rnode.getChildren()) {
+            ReferencedEnvelope childNodeEnvelope = childNode.getMBR();
+            ReferencedEnvelope ToInsertEnvelope = new ReferencedEnvelope(toEnvelope(polygon));
+//            Polygon childNodePolygon = convertToPolygon(childNodeEnvelope);   // fixme: convertToPolygon ?
+            Polygon childNodePolygon = childNode.getPolygon();
+            if (childNodePolygon.contains(polygon)) {
+                return (RNode) childNode;
             } else {
-                double area = nodeEnvelope.intersection(convertToEnvelope(polygon)).getArea();
+//                double area = childNodeEnvelope.intersection(convertToEnvelope(polygon)).getArea();  // fixme: convertToEnvelope ?
+                double area = childNodeEnvelope.intersection(ToInsertEnvelope).getArea();
                 if (area < minArea) {
                     minArea = area;
-                    result = (RNode) node;
+                    result = (RNode) childNode;
                 }
             }
         }
         return result;
     }
-    private RNode chooseLeaf(RNode rnode, RLeaf leaf) {
+    private RLeaf chooseLeaf(RNode rnode, RLeaf leaf) {
         // Algorithm ChooseLeaf.
         // Select a leaf node
         //in which to place a new index entry E.
@@ -290,40 +300,44 @@ public class RTree {
         //the entry with the rectangle of smallest area.
 
         //CL4. [Descend until a leaf is reached.]
-        // Set
-        //N to be the child node pointed to by
-        //F.p and repeat from CL2
+        // Set N to be the child node pointed to by F.p
+        // and repeat from CL2
 
         logger.debug("chooseLeaf()");
         double minEnlargement = Double.POSITIVE_INFINITY;
         RLeaf result = null;
-        for (Node node : rnode.getChildren()) {
-            ReferencedEnvelope nodeEnvelope = node.getMBR();
-            ReferencedEnvelope expandedEnvelope = nodeEnvelope.expandToInclude(leaf.getMBR());
-            double enlargement = expandedEnvelope.getArea() - nodeEnvelope.getArea();
+        for (Node childNode : rnode.getChildren()) {
+            ReferencedEnvelope childNodeEnvelope = childNode.getMBR();
+            double childNodeEnvelopeArea = childNodeEnvelope.getArea();
+//            ReferencedEnvelope expandedEnvelope = nodeEnvelope.expandToInclude(leaf.getMBR());
+            childNodeEnvelope.expandToInclude(leaf.getMBR());
+            double enlargement = childNodeEnvelope.getArea() - childNodeEnvelopeArea;
             if (enlargement < minEnlargement) {
                 minEnlargement = enlargement;
-                result = (RLeaf) node;
+                result = (RLeaf) childNode;
             } else if (enlargement == minEnlargement && result != null) {
-                if (nodeEnvelope.intersection(leaf.getMBR()).getArea() < result.getMBR().intersection(leaf.getMBR()).getArea()) {
-                    result = (RLeaf) node;
+                if (childNodeEnvelope.intersection(leaf.getMBR()).getArea() < result.getMBR().intersection(leaf.getMBR()).getArea()) {
+                    result = (RLeaf) childNode;
                 }
             }
         }
         return result;
     }
 
-    public ReferencedEnvelope expandToInclude(ReferencedEnvelope other) {
-        if (other == null) {
-            return new ReferencedEnvelope(this);
-        }
 
-        double xmin = Math.min(this.getMinX(), other.getMinX());
-        double ymin = Math.min(this.getMinY(), other.getMinY());
-        double xmax = Math.max(this.getMaxX(), other.getMaxX());
-        double ymax = Math.max(this.getMaxY(), other.getMaxY());
-        return new ReferencedEnvelope(xmin, xmax, ymin, ymax, this.getCoordinateReferenceSystem());
-    }
+//  todo: see ReferencedEnvelope.expandToInclude
+
+//    public ReferencedEnvelope expandToInclude(ReferencedEnvelope other) {
+//        if (other == null) {
+//            return new ReferencedEnvelope(this);
+//        }
+//
+//        double xmin = Math.min(this.getMinX(), other.getMinX());
+//        double ymin = Math.min(this.getMinY(), other.getMinY());
+//        double xmax = Math.max(this.getMaxX(), other.getMaxX());
+//        double ymax = Math.max(this.getMaxY(), other.getMaxY());
+//        return new ReferencedEnvelope(xmin, xmax, ymin, ymax, this.getCoordinateReferenceSystem());
+//    }
 
     private void splitNode(int mode, RNode node) {
         // todo
@@ -332,5 +346,33 @@ public class RTree {
 
     public Node getRoot() {
         return root;
+    }
+
+    public void search(Point point) {
+        // todo
+    }
+
+    public void addFeatureCollection(SimpleFeatureCollection allFeatures, String mode) {
+        logger.debug("addFeatureCollection()");
+
+        if (mode.equals("quadratic")) {
+            //todo
+        } else if (mode.equals("linear")) {
+            //todo
+        } else {
+            logger.error("Unknown mode: " + mode);
+        }
+        try ( SimpleFeatureIterator iterator = allFeatures.features() ){
+            while( iterator.hasNext()){
+                SimpleFeature feature = iterator.next();
+                Polygon polygon = (Polygon) feature.getDefaultGeometry();
+                String id = Objects.toString(feature.getAttribute("id"));
+                addLeaf(root
+                        , id
+                        , polygon
+
+                );
+            }
+        }
     }
 }

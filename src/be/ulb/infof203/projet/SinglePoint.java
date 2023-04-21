@@ -61,11 +61,7 @@ public class SinglePoint {
 
         // display a data store file chooser dialog for shapefiles
 //        String filename="src/be/ulb/infof203/projet/WB_countries_Admin0_10m.shp";
-
-        //Decompress zip file to get the right file
-//        String filename ="src/ressources/sh_statbel_statistical_sectors_20210101.shp";
-        String filename ="resources/sh_statbel_statistical_sectors_20210101.shp";
-
+        String filename ="resources/sh_statbel_statistical_sectors_20210101/sh_statbel_statistical_sectors_20210101.shp";
         //String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
 
         File file = new File(filename);

@@ -1,4 +1,3 @@
-import be.ulb.infof203.projet.SinglePoint;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Main {
-    private static final Logger logger = LoggerFactory.getLogger(SinglePoint.class);
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static RTree buildRTree(SimpleFeatureCollection all_features){
         RTree rTree = new RTree(4, 4, 4, 4);
@@ -68,12 +67,49 @@ public class Main {
 
         System.out.println(all_features.size()+" features");
 
-        searchIterative(all_features, point);
+        if (mode.equals("iterative")) {
+            logger.debug("mode: iterative");
+            searchIterative(all_features, point);
+        } else {
+            searchTree(all_features, point, mode);
+        }
+    }
 
+    private static void searchTree(SimpleFeatureCollection allFeatures
+            , Point point
+            , String mode) throws Exception {
+        logger.debug("searchTree()");
+        // chrono start:
+        long start = System.currentTimeMillis();
+        SimpleFeature target=null;
+        RTree rTree = new RTree(4, 4, 4, 4);
+        rTree.addFeatureCollection(allFeatures
+        , mode);
+        rTree.search(point);
+        // chrono stop:
+        long stop = System.currentTimeMillis();
+        System.out.println("Time: "+(stop-start)+" ms");
+
+//        try ( SimpleFeatureIterator iterator = allFeatures.features() ) {
+//            while (iterator.hasNext()) {
+//                SimpleFeature feature = iterator.next();
+//
+//                MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
+//
+//                if (polygon != null && polygon.contains(point)) {
+//                    target = feature;
+//                    break;
+//                }
+//            }
+//
+//        }
 
     }
 
     public static void searchIterative(SimpleFeatureCollection all_features, Point point){
+        logger.debug("searchIterative()");
+        // chrono start:
+        long start = System.currentTimeMillis();
         SimpleFeature target=null;
 
         try ( SimpleFeatureIterator iterator = all_features.features() ){
@@ -85,6 +121,9 @@ public class Main {
 
                 if (polygon != null && polygon.contains(point)) {
                     target = feature;
+                    // chrono stop:
+                    long stop = System.currentTimeMillis();
+                    System.out.println("Time: "+(stop-start)+" ms");
                     break;
                 }
             }
@@ -104,14 +143,10 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         logger.debug("main()");
+        String filename ="resources/sh_statbel_statistical_sectors_20210101/sh_statbel_statistical_sectors_20210101.shp";
+        // iterative search: 165 ms
+        // rtree search:
 
-        //        String filename="src/be/ulb/infof203/projet/WB_countries_Admin0_10m.shp";
-
-        //Decompress zip file to get the right file
-//        String filename ="src/ressources/sh_statbel_statistical_sectors_20210101.shp";
-        String filename = "resources/sh_statbel_statistical_sectors_20210101.shp";
-
-        //String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
 
 
         GeometryBuilder gb = new GeometryBuilder();
