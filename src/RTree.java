@@ -5,6 +5,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.geometry.DirectPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -361,10 +362,51 @@ public class RTree {
         return root;
     }
 
-    public void search(Point point) {
+    public List<RLeaf> search(Point point) {
         logger.debug("search()");
-        // todo
+        List<RLeaf> result = new ArrayList<>();
+        searchRecursive(point,
+                        root,
+                        result);
+        return result;
     }
+
+    public void searchRecursive(Point point, Node node, List<RLeaf> result) {
+        /*if (node instanceof RLeaf) {
+            RLeaf leaf = (RLeaf) node;
+            if (leaf.getPolygon().contains(point)) {
+                result.add(leaf);
+            }
+        } else {
+            RNode rnode = (RNode) node;
+            for (Node child : rnode.getChildren()) {
+                // Ici, le DirectPosition c'est intellij qui te met une error si tu le met
+                // mais ça ne devrait pas poser de problème
+                if (child.getMBR().contains((DirectPosition) point)) {
+                    searchRecursive(point, child, result);
+                }
+            }
+        }*/
+        logger.debug("search() recursive");
+        if (node instanceof RLeaf) {
+                RLeaf leaf = (RLeaf) node;
+                if (leaf.getPolygon().contains(point)) {
+                    result.add(leaf);
+                }
+            } else if (node instanceof RNode) {
+            logger.debug("search() recursive RNode");
+                RNode rnode = (RNode) node;
+                for (Node child : rnode.getChildren()) {
+                    if (child.getMBR().contains((DirectPosition) point)) {
+                        searchRecursive(point, child, result);
+                    }
+                }
+            }
+        }
+
+
+
+
 
     // build tree
     public void addFeatureCollection(SimpleFeatureCollection allFeatures, String mode) {
