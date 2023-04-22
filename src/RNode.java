@@ -22,8 +22,6 @@ public class RNode extends Node{
     private List<Node> children;
     private RNode parent;
 
-    //    private int maxChildren;
-    //    private int minChildren;
     private ReferencedEnvelope mbr; // Minimum Bounding Rectangle
 
     public RNode(List<Node> children) {

@@ -7,7 +7,6 @@ import org.geotools.geometry.jts.GeometryBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
@@ -20,28 +19,28 @@ import java.util.Objects;
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static RTree buildRTree(SimpleFeatureCollection all_features){
-        RTree rTree = new RTree(4, 4, 4, 4);
-
-
-        try ( SimpleFeatureIterator iterator = all_features.features() ){
-            while( iterator.hasNext()){
-                SimpleFeature feature = iterator.next();
-
-//                MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
-                Polygon polygon = (Polygon) feature.getDefaultGeometry();
-//                Node node = new Node();
-                // random String
-                String id = Objects.toString(feature.getAttribute("id"));
-                rTree.addLeaf(rTree.getRoot()
-//                        , polygon.getEnvelopeInternal()
-                        , id
-                        , polygon
-                );
-            }
-        }
-        return rTree;
-    }
+//    public static RTree buildRTree(SimpleFeatureCollection all_features){
+//        RTree rTree = new RTree(4, 4, 4, 4);
+//
+//
+//        try ( SimpleFeatureIterator iterator = all_features.features() ){
+//            while( iterator.hasNext()){
+//                SimpleFeature feature = iterator.next();
+//
+////                MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
+//                Polygon polygon = (Polygon) feature.getDefaultGeometry();
+////                Node node = new Node();
+//                // random String
+//                String id = Objects.toString(feature.getAttribute("id"));
+//                rTree.addLeaf(rTree.getRoot()
+////                        , polygon.getEnvelopeInternal()
+//                        , id
+//                        , polygon
+//                );
+//            }
+//        }
+//        return rTree;
+//    }
 
     public static SimpleFeatureCollection getSimpleFeatureCollection(String filename) throws IOException {
         File file = new File(filename);
@@ -83,26 +82,14 @@ public class Main {
         long start = System.currentTimeMillis();
         SimpleFeature target=null;
         RTree rTree = new RTree(4, 4, 4, 4);
+
         rTree.addFeatureCollection(allFeatures
         , mode);
+
         rTree.search(point);
         // chrono stop:
         long stop = System.currentTimeMillis();
         System.out.println("Time: "+(stop-start)+" ms");
-
-//        try ( SimpleFeatureIterator iterator = allFeatures.features() ) {
-//            while (iterator.hasNext()) {
-//                SimpleFeature feature = iterator.next();
-//
-//                MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
-//
-//                if (polygon != null && polygon.contains(point)) {
-//                    target = feature;
-//                    break;
-//                }
-//            }
-//
-//        }
 
     }
 
@@ -167,9 +154,9 @@ public class Main {
 //                         , r.nextInt((int) global_bounds.getMinY()
 //                                    , (int) global_bounds.getMaxY()));
 
-        String mode = "iterative";
-//        String mode = "RTree Quadratic";
-//        String mode = "RTree Linear";
+//        String mode = "iterative";
+        String mode = "quadratic";
+//        String mode = "linear";
 
         search(getSimpleFeatureCollection(filename), p, mode);
     }

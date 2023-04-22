@@ -1,26 +1,27 @@
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
 
-import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.geotools.geometry.jts.JTS.toGeometry;
 
 
 public class Node {
-    private static final Logger logger = org.geotools.util.logging.Logging.getLogger(Node.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(Node.class);
     private List<Node> children;
     private Node parent;
 
     public Node() {
-        this.children = null;
+        logger.debug("Node()");
+//        this.children = new list of nodes which is empty:
+        this.children = new ArrayList<Node>();
+
     }
 //    private Envelope mbr;
     private ReferencedEnvelope mbr;
-    private Polygon polygon=null;
+    private Polygon polygon;
 //    private Rectangle mbr;
 
 //    protected Envelope getMBR() {
@@ -30,16 +31,17 @@ public class Node {
     }
 
     public List<Node> getChildren() {
-        return children;
+        logger.debug("getChildren()");
+        return this.children;
     }
 
     public Node getParent() {
-        logger.fine("getParent()");
+        logger.debug("getParent()");
         return parent;
     }
 
     public void setParent(Node parent) {
-        logger.fine("setParent()");
+        logger.debug("setParent()");
         this.parent = parent;
     }
 

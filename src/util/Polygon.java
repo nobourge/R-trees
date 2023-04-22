@@ -1,16 +1,12 @@
 package util;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.opengis.geometry.Envelope;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-//import org.geotools.geometry.jts.ReferencedEnvelope;
-
 import java.util.logging.Logger;
 
+// not import org.opengis.geometry.Envelope because it doesn't have the getArea() method & it's not a JTS object &
 // Manque certaine méthode voir avec l'énoncé si c'est toutes les méthodes sont cohérentes. Le PIP, je pense que c'est bon
 public class Polygon {
 

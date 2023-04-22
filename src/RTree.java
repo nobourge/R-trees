@@ -1,6 +1,7 @@
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
@@ -39,22 +40,24 @@ public class RTree {
     //(6) All leaves appear on the same level.
 
     private static final Logger logger = LoggerFactory.getLogger(RTree.class);
-    private Node root;
+    private final Node root;
 
-    private int maxDepth;
-    private int minDepth;
-    private int depth;
-    private int size;
-    private int maxChildren;
-    private int minChildren;
-    private int leafSize;
-    private int nodeSize;
-    private int maxLeafSize;
-    private int minLeafSize;
-    private int maxNodeSize;
-    private int minNodeSize;
-    private int maxTreeSize;
-    private int minTreeSize;
+    // as every leaf is at the same level, the tree depth is the same as the tree height & the leaf depth
+
+    private final int maxDepth;
+    private final int minDepth;
+    private final int depth;
+    private final int size;
+    private final int maxChildren;
+    private final int minChildren;
+    private final int leafSize;
+    private final int nodeSize;
+    private final int maxLeafSize;
+    private final int minLeafSize;
+    private final int maxNodeSize;
+    private final int minNodeSize;
+    private final int maxTreeSize;
+    private final int minTreeSize;
     private int mode;
 
 
@@ -104,20 +107,29 @@ public class RTree {
 
     public Node addLeaf(Node rnode
             , String label
-            , Polygon polygon) {
+            , Polygon polygon
+            , String mode
+                        ) {
         logger.debug("addLeaf()");
-        if (rnode.getChildren().size() == 0 || rnode.getChildren().get(0) instanceof RLeaf) {
+        if (rnode.getChildren() == null ||rnode.getChildren().size()==0 || rnode.getChildren().get(0) instanceof RLeaf) {
             rnode.getChildren().add(new RLeaf(polygon, label));
         } else {
             RNode node = chooseNode(rnode, polygon);
-            Node new_node = addLeaf(node, label, polygon);
+            Node new_node = addLeaf(node, label, polygon, mode);
             if (new_node != null) {
                 rnode.getChildren().add(new_node);
 //                rnode.updateMBR(polygon);
             }
             if (rnode.getChildren().size() >= maxChildren) {
-                return splitQuadratic(node);
-//                return splitLinear(rnode);
+                if (mode.equals("quadratic")) {
+                    return splitQuadratic(node);
+
+                } else if (mode.equals("linear")) {
+                    return splitLinear(node);
+
+                } else {
+                    logger.error("Unknown mode: " + mode);
+                }
             } else {
                 return null;
             }
@@ -262,6 +274,7 @@ public class RTree {
     }
 
     private RNode chooseNode(Node rnode, Polygon polygon){
+//    private RNode chooseNode(Node rnode, MultiPolygon polygon){
 //    private RNode chooseNode(Node rnode, ReferencedEnvelope ToInsertEnvelope){
         logger.debug("chooseNode()");
         double minArea = Double.POSITIVE_INFINITY;
@@ -349,29 +362,31 @@ public class RTree {
     }
 
     public void search(Point point) {
+        logger.debug("search()");
         // todo
     }
 
+    // build tree
     public void addFeatureCollection(SimpleFeatureCollection allFeatures, String mode) {
         logger.debug("addFeatureCollection()");
 
-        if (mode.equals("quadratic")) {
-            //todo
-        } else if (mode.equals("linear")) {
-            //todo
-        } else {
-            logger.error("Unknown mode: " + mode);
-        }
+
         try ( SimpleFeatureIterator iterator = allFeatures.features() ){
             while( iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
-                Polygon polygon = (Polygon) feature.getDefaultGeometry();
-                String id = Objects.toString(feature.getAttribute("id"));
-                addLeaf(root
-                        , id
-                        , polygon
+                // feature has attribute MultiPolygon
+                MultiPolygon multiPolygon = (MultiPolygon) feature.getDefaultGeometry(); // getDefaultGeometry returns a Geometry Object
 
-                );
+//                Polygon polygon = (Polygon) feature.getDefaultGeometry(); // Exception in thread "main" java.lang.ClassCastException: class org.locationtech.jts.geom.MultiPolygon cannot be cast to class org.locationtech.jts.geom.Polygon (org.locationtech.jts.geom.MultiPolygon and org.locationtech.jts.geom.Polygon are in unnamed module of loader 'app')
+                String id = Objects.toString(feature.getAttribute("id"));
+
+                for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
+                    Polygon polygon = (Polygon) multiPolygon.getGeometryN(i);
+                    addLeaf(root
+                            , id + "_" + i
+                            , polygon
+                            , mode);
+                }
             }
         }
     }
