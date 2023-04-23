@@ -84,7 +84,6 @@ public class SinglePoint {
         GeometryBuilder gb = new GeometryBuilder();
         logger.info("Global bounds: "+global_bounds);
         Point p = gb.point(152183, 167679);// Plaine
-         logger.info("util.Point: "+p);
          logger.debug("util.Point: "+p);
 
         //util.Point p = gb.point(4.4, 50.8);//

@@ -31,7 +31,7 @@ public class Node {
     }
 
     public List<Node> getChildren() {
-        logger.debug("getChildren()");
+//        logger.debug("getChildren()");
         return this.children;
     }
 

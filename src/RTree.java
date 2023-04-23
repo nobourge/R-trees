@@ -47,18 +47,11 @@ public class RTree {
 
     private final int maxDepth;
     private final int minDepth;
-    private final int depth;
-    private final int size;
+    private int depth;
+    private int size;
     private final int maxChildren;
     private final int minChildren;
-    private final int leafSize;
-    private final int nodeSize;
-    private final int maxLeafSize;
-    private final int minLeafSize;
-    private final int maxNodeSize;
-    private final int minNodeSize;
-    private final int maxTreeSize;
-    private final int minTreeSize;
+    private int leafQuantity;
     private int mode;
 
 
@@ -70,16 +63,9 @@ public class RTree {
         this.maxChildren = maxChildren;
         this.minChildren = minChildren;
         this.root = new Node();
+        leafQuantity = 0;
         this.depth = 0;
         this.size = 0;
-        this.leafSize = 0;
-        this.nodeSize = 0;
-        this.maxLeafSize = 0;
-        this.minLeafSize = 0;
-        this.maxNodeSize = 0;
-        this.minNodeSize = 0;
-        this.maxTreeSize = 0;
-        this.minTreeSize = 0;
 
     }
 
@@ -113,7 +99,10 @@ public class RTree {
                         ) {
         logger.debug("addLeaf()");
         if (rnode.getChildren() == null ||rnode.getChildren().size()==0 || rnode.getChildren().get(0) instanceof RLeaf) {
+            // bottom level is reached -> create leaf
             rnode.getChildren().add(new RLeaf(polygon, label));
+            leafQuantity++;
+            logger.debug("leafQuantity: " + leafQuantity);
         } else {
             RNode node = chooseNode(rnode, polygon);
             Node new_node = addLeaf(node, label, polygon, mode);
@@ -203,6 +192,7 @@ public class RTree {
     }
 
     private Node[] pickSeeds(List<Node> children) {
+        logger.debug("pickSeeds()");
         Node[] seeds =new Node[2];
         double maxDistance = 0.0;
         for (int i = 0; i < children.size(); i++) {
@@ -219,6 +209,7 @@ public class RTree {
     }
 
     private  double quadraticCost(RNode node, List<Node> children) {
+        logger.debug("quadraticCost()");
         ReferencedEnvelope mbr = node.getMBR();
         double area = mbr.getArea();
 
@@ -255,6 +246,7 @@ public class RTree {
         //enlarged least.
         //We now turn to algorithms for tioning the set of M+1 entries into two
         //groups, one for each new node.
+        logger.debug("splitLinear()");
         int numChildren = rnode.getChildren().size();
         int midIndex = numChildren / 2;
 
@@ -368,6 +360,9 @@ public class RTree {
         searchRecursive(point,
                         root,
                         result);
+        if (result.isEmpty()) {
+            logger.debug("search() result is empty");
+        }
         return result;
     }
 
@@ -403,10 +398,6 @@ public class RTree {
                 }
             }
         }
-
-
-
-
 
     // build tree
     public void addFeatureCollection(SimpleFeatureCollection allFeatures, String mode) {
