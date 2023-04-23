@@ -4,13 +4,14 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 // not import org.opengis.geometry.Envelope because it doesn't have the getArea() method & it's not a JTS object &
 // Manque certaine méthode voir avec l'énoncé si c'est toutes les méthodes sont cohérentes. Le PIP, je pense que c'est bon
 public class Polygon {
 
-    private static final Logger logger = org.geotools.util.logging.Logging.getLogger(Polygon.class);
+    private static final Logger logger = LoggerFactory.getLogger(Polygon.class);
+
     private List<Point> points;
 //    private Rectangle MBR;
 //    private Envelope2D MBR;
@@ -19,24 +20,24 @@ public class Polygon {
 
 
     public Polygon(List<Point> points) {
-        logger.fine("util.Polygon()");
+        logger.debug("util.Polygon()");
         logger.info("util.Polygon created");
         this.points = new ArrayList<>(points);
         this.MBR = calculateMBR();
     }
 
     public List<Point> getPoints() {
-        logger.fine("getPoints()");
+        logger.debug("getPoints()");
         return points;
     }
 
     public void setPoints(List<Point> points) {
-        logger.fine("setPoints()");
+        logger.debug("setPoints()");
         this.points = new ArrayList<>(points);
     }
 
     public double area() {
-        logger.fine("area()");
+        logger.debug("area()");
         int n = points.size();
         double area = 0.0;
         for (int i = 0; i < n; ++i) {
@@ -51,7 +52,7 @@ public class Polygon {
     private ReferencedEnvelope calculateMBR() {
 //    private Envelope2D calculateMBR() {
 //    private Envelope calculateMBR() {
-        logger.fine("calculateMBR()");
+        logger.debug("calculateMBR()");
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
@@ -79,7 +80,7 @@ public class Polygon {
 
 
     public static boolean PIP(Point point, Polygon polygon) {
-        logger.fine("PIP()");
+        logger.debug("PIP()");
         int count = 0;
         List<Point> vertices = polygon.getPoints();
         int n = vertices.size();
@@ -105,7 +106,7 @@ public class Polygon {
 
 //    public Rectangle getMBR() {
     public ReferencedEnvelope getMBR() {
-        logger.fine("getMBR()");
+        logger.debug("getMBR()");
         return this.MBR;
     }
 }

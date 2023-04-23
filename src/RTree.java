@@ -52,6 +52,8 @@ public class RTree {
     private final int maxChildren;
     private final int minChildren;
     private int leafQuantity;
+    private int rNodeQuantity;
+
     private int mode;
 
 
@@ -62,8 +64,9 @@ public class RTree {
         this.minDepth = minDepth;
         this.maxChildren = maxChildren;
         this.minChildren = minChildren;
-        this.root = new Node();
+        this.root = new RNode();
         leafQuantity = 0;
+        rNodeQuantity = 0;
         this.depth = 0;
         this.size = 0;
 
@@ -109,6 +112,8 @@ public class RTree {
             if (new_node != null) {
                 rnode.getChildren().add(new_node);
 //                rnode.updateMBR(polygon);
+                rNodeQuantity++;
+                logger.debug("rNodeQuantity: " + rNodeQuantity);
             }
             if (rnode.getChildren().size() >= maxChildren) {
                 if (mode.equals("quadratic")) {
@@ -357,16 +362,20 @@ public class RTree {
     public List<RLeaf> search(Point point) {
         logger.debug("search()");
         List<RLeaf> result = new ArrayList<>();
-        searchRecursive(point,
-                        root,
-                        result);
+        result = searchRecursive(point
+                , root
+                , result
+                , 0);
         if (result.isEmpty()) {
             logger.debug("search() result is empty");
         }
         return result;
     }
 
-    public void searchRecursive(Point point, Node node, List<RLeaf> result) {
+    public List<RLeaf> searchRecursive(Point point
+            , Node node
+            , List<RLeaf> result
+    , int depth) {
         /*if (node instanceof RLeaf) {
             RLeaf leaf = (RLeaf) node;
             if (leaf.getPolygon().contains(point)) {
@@ -384,20 +393,26 @@ public class RTree {
         }*/
         logger.debug("search() recursive");
         if (node instanceof RLeaf) {
+            logger.debug("RLeaf");
                 RLeaf leaf = (RLeaf) node;
                 if (leaf.getPolygon().contains(point)) {
+                    logger.debug("RLeaf contains point");
                     result.add(leaf);
+                    return result;
                 }
             } else if (node instanceof RNode) {
-            logger.debug("search() recursive RNode");
+            logger.debug("RNode");
+            depth++;
+            logger.debug("search() recursive depth: " + depth);
                 RNode rnode = (RNode) node;
                 for (Node child : rnode.getChildren()) {
                     if (child.getMBR().contains((DirectPosition) point)) {
-                        searchRecursive(point, child, result);
+                        searchRecursive(point, child, result, depth);
                     }
                 }
             }
-        }
+        return result;
+    }
 
     // build tree
     public void addFeatureCollection(SimpleFeatureCollection allFeatures, String mode) {

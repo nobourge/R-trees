@@ -2,17 +2,17 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Envelope;
 
 import java.awt.*;
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 public class RLeaf extends Node {
-    private static final Logger logger = org.geotools.util.logging.Logging.getLogger(RLeaf.class);
+    private static final Logger logger = LoggerFactory.getLogger(RLeaf.class);
     private Polygon polygon;
 //    private Envelope mbr;
     private Rectangle mbr;
     private String label;
 
     public RLeaf(Polygon polygon, String label) {
-        logger.fine("RLeaf()");
+        logger.debug("RLeaf()");
         this.polygon = polygon;
         Envelope envelope = polygon.getEnvelopeInternal();
         // transform Envelope e into Rectangle r
@@ -25,13 +25,13 @@ public class RLeaf extends Node {
     }
 
     public Polygon getPolygon() {
-        logger.fine("getPolygon()");
+        logger.debug("getPolygon()");
         return this.polygon;
     }
 
 
     public String getLabel() {
-        logger.fine("getLabel()");
+        logger.debug("getLabel()");
         return this.label;
     }
 }

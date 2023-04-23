@@ -1,8 +1,9 @@
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RNode extends Node{
     // Une feuille contiendra
@@ -15,8 +16,8 @@ public class RNode extends Node{
     // une liste de descendants (nœuds ou feuilles)
     // , ainsi qu’un MBR correspondant
     //      à l’union de l’ensemble des MBR de ses descendants.
-    private static final Logger logger = org.geotools.util.logging.Logging.getLogger(RNode.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(RNode.class);
 
     //list of children of type RNode or RLeaf:
     private List<Node> children;
@@ -25,7 +26,7 @@ public class RNode extends Node{
     private ReferencedEnvelope mbr; // Minimum Bounding Rectangle
 
     public RNode(List<Node> children) {
-        logger.fine("RNode()");
+        logger.debug("RNode()");
     //        this.maxChildren = 4;
     //        this.minChildren = 2;
 
@@ -33,16 +34,22 @@ public class RNode extends Node{
         updateMBR();
 
     }
+    public RNode() {
+        logger.debug("Node()");
+//        this.children = new list of nodes which is empty:
+        this.children = new ArrayList<Node>();
+
+    }
 
 
 
 //    public List<Polygon> getPolygons() {
-//        logger.fine("getPolygons()");
+//        logger.debug("getPolygons()");
 //        return polygons;
 //    }
 
     public void addChild(Node child) {
-        logger.fine("addChild()");
+        logger.debug("addChild()");
         children.add(child);
         child.setParent(this);
         updateMBR();
@@ -57,31 +64,31 @@ public class RNode extends Node{
     }
 
     public void addLeaf(RLeaf leaf) {
-        logger.fine("addLeaf()");
+        logger.debug("addLeaf()");
         children.add(leaf);
         updateMBR();
     }
 
 //    public void addPolygon(Polygon polygon) {
-//        logger.fine("addPolygon()");
+//        logger.debug("addPolygon()");
 //        polygons.add(polygon);
 //        updateMBR();
 //    }
 
     public void removeChild(RNode child) {
-        logger.fine("removeChild()");
+        logger.debug("removeChild()");
         children.remove(child);
         updateMBR();
     }
 
 //    public void removePolygon(Polygon polygon) {
-//        logger.fine("removePolygon()");
+//        logger.debug("removePolygon()");
 //        polygons.remove(polygon);
 //        updateMBR();
 //    }
 
     void updateMBR() {
-        logger.fine("updateMBR()");
+        logger.debug("updateMBR()");
 
         if (children.size() == 0) {
             mbr = null;
