@@ -1,3 +1,5 @@
+package be.ulb.infof203.projet;
+
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import java.util.ArrayList;
@@ -35,9 +37,9 @@ public class RNode extends Node{
 
     }
     public RNode() {
-        logger.debug("Node()");
+        logger.debug("RNode()");
 //        this.children = new list of nodes which is empty:
-        this.children = new ArrayList<Node>();
+        this.children = new ArrayList<>();
 
     }
 

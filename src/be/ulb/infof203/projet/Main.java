@@ -1,3 +1,5 @@
+package be.ulb.infof203.projet;
+
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.collection.ListFeatureCollection;

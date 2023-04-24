@@ -1,3 +1,5 @@
+package be.ulb.infof203.projet;
+
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.locationtech.jts.geom.Polygon;
 
@@ -16,7 +18,7 @@ public class Node {
     public Node() {
         logger.debug("Node()");
 //        this.children = new list of nodes which is empty:
-        this.children = new ArrayList<Node>();
+        this.children = new ArrayList<>();
 
     }
 //    private Envelope mbr;

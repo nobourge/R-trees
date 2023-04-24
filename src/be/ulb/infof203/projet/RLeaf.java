@@ -1,3 +1,5 @@
+package be.ulb.infof203.projet;
+
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Envelope;
 
@@ -17,10 +19,8 @@ public class RLeaf extends Node {
         Envelope envelope = polygon.getEnvelopeInternal();
         // transform Envelope e into Rectangle r
 
-        Rectangle rect = new Rectangle((int)envelope.getMinX(), (int)envelope.getMinY(),
+        this.mbr = new Rectangle((int)envelope.getMinX(), (int)envelope.getMinY(),
                 (int)envelope.getWidth(), (int)envelope.getHeight());
-
-        this.mbr = rect;
         this.label = label;
     }
 
