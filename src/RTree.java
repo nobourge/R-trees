@@ -29,6 +29,7 @@ public class RTree {
 
     //(3) Every non-leaf node has between m
     //and M children unless it is the root.
+    //and M children unless it is the root.
 
     //(4) For each entry (/, child —pointer ) in a
     //non-leaf node,
@@ -317,7 +318,7 @@ public class RTree {
         logger.debug("chooseLeaf()");
         double minEnlargement = Double.POSITIVE_INFINITY;
         RLeaf result = null;
-        for (Node childNode : rnode.getChildren()) {
+        for (Node childNode : rnode.getChildrenRNode()) {
             ReferencedEnvelope childNodeEnvelope = childNode.getMBR();
             double childNodeEnvelopeArea = childNodeEnvelope.getArea();
 //            ReferencedEnvelope expandedEnvelope = nodeEnvelope.expandToInclude(leaf.getMBR());
@@ -405,8 +406,9 @@ public class RTree {
             depth++;
             logger.debug("search() recursive depth: " + depth);
                 RNode rnode = (RNode) node;
-                for (Node child : rnode.getChildren()) {
-                    if (child.getMBR().contains((DirectPosition) point)) {
+                for (RNode child : node.getChildrenRNode()) {
+
+                    if (child.getMBR().contains(point.getX(), point.getY()) ) {//.contains((DirectPosition) point)) {
                         searchRecursive(point, child, result, depth);
                     }
                 }

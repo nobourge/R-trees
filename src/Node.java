@@ -10,13 +10,15 @@ import static org.geotools.geometry.jts.JTS.toGeometry;
 
 public class Node {
     private static final Logger logger = LoggerFactory.getLogger(Node.class);
-    private List<Node> children;
+    private List<RNode> childrenRNode;
+    private List<RLeaf> childrenRLeaf;
     private Node parent;
 
     public Node() {
         logger.debug("Node()");
 //        this.children = new list of nodes which is empty:
-        this.children = new ArrayList<Node>();
+        this.childrenRNode = new ArrayList<RNode>();
+        this.childrenRLeaf = new ArrayList<RLeaf>();
 
     }
 //    private Envelope mbr;
@@ -30,9 +32,14 @@ public class Node {
         return this.mbr;
     }
 
-    public List<Node> getChildren() {
+    public List<RNode> getChildrenRNode() {
 //        logger.debug("getChildren()");
-        return this.children;
+        return this.childrenRNode;
+    }
+
+    public List<RLeaf> getChildrenRLeaf() {
+//        logger.debug("getChildren()");
+        return this.childrenRLeaf;
     }
 
     public Node getParent() {

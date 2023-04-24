@@ -20,24 +20,26 @@ public class RNode extends Node{
     private static final Logger logger = LoggerFactory.getLogger(RNode.class);
 
     //list of children of type RNode or RLeaf:
-    private List<Node> children;
+    private List<RNode> childrenRNode;
+    private List<RLeaf> childrenRLeaf;
     private RNode parent;
 
     private ReferencedEnvelope mbr; // Minimum Bounding Rectangle
-
-    public RNode(List<Node> children) {
+    public RNode(List<RNode> childrenRNode, List<RLeaf> childrenRLeaf) {
         logger.debug("RNode()");
     //        this.maxChildren = 4;
     //        this.minChildren = 2;
 
-        this.children = children;
+        this.childrenRNode = childrenRNode;
+        this.childrenRLeaf = childrenRLeaf;
         updateMBR();
 
     }
     public RNode() {
         logger.debug("Node()");
 //        this.children = new list of nodes which is empty:
-        this.children = new ArrayList<Node>();
+        this.childrenRNode = new ArrayList<RNode>();
+        this.childrenRLeaf = new ArrayList<RLeaf>();
 
     }
 
@@ -48,9 +50,16 @@ public class RNode extends Node{
 //        return polygons;
 //    }
 
-    public void addChild(Node child) {
+    public void addChildRNode(RNode child) {
         logger.debug("addChild()");
-        children.add(child);
+        childrenRNode.add(child);
+        child.setParent(this);
+        updateMBR();
+    }
+
+    public void addChildRLeaf(RLeaf child) {
+        logger.debug("addChild()");
+        childrenRLeaf.add(child);
         child.setParent(this);
         updateMBR();
     }
@@ -65,7 +74,7 @@ public class RNode extends Node{
 
     public void addLeaf(RLeaf leaf) {
         logger.debug("addLeaf()");
-        children.add(leaf);
+        childrenRLeaf.add(leaf);
         updateMBR();
     }
 
@@ -77,7 +86,7 @@ public class RNode extends Node{
 
     public void removeChild(RNode child) {
         logger.debug("removeChild()");
-        children.remove(child);
+        childrenRNode.remove(child);
         updateMBR();
     }
 
@@ -90,16 +99,28 @@ public class RNode extends Node{
     void updateMBR() {
         logger.debug("updateMBR()");
 
-        if (children.size() == 0) {
+        if (childrenRNode.size() == 0) {
             mbr = null;
-            return;
+            if (childrenRLeaf.size() == 0)
+            {
+                mbr = null;
+            }
+
+            else
+            {
+                for (RLeaf child : childrenRLeaf) {
+                    ReferencedEnvelope childMBR = child.getMBR();
+                    mbr.expandToInclude(childMBR);
+                }
+            }
+
         }
 
-        mbr = children.get(0).getMBR();
-        for (Node child : children) {
-            ReferencedEnvelope childMBR = child.getMBR();
-            //
-            mbr.expandToInclude(childMBR);
+        else {
+            for (RNode child : childrenRNode) {
+                ReferencedEnvelope childMBR = child.getMBR();
+                mbr.expandToInclude(childMBR);
+            }
         }
     }
 
