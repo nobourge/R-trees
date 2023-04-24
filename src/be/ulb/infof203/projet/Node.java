@@ -1,6 +1,8 @@
 package be.ulb.infof203.projet;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 
 import java.util.ArrayList;
@@ -12,29 +14,16 @@ import static org.geotools.geometry.jts.JTS.toGeometry;
 
 public class Node {
     private static final Logger logger = LoggerFactory.getLogger(Node.class);
-    private List<Node> children;
     private Node parent;
 
     public Node() {
         logger.debug("Node()");
-//        this.children = new list of nodes which is empty:
-        this.children = new ArrayList<>();
-
     }
-//    private Envelope mbr;
-    private ReferencedEnvelope mbr;
-    private Polygon polygon;
-//    private Rectangle mbr;
+    private Envelope mbr;
+    private MultiPolygon polygon;
 
-//    protected Envelope getMBR() {
-    protected ReferencedEnvelope getMBR() {
-//    protected Rectangle getMBR() {
+    protected Envelope getMBR() {
         return this.mbr;
-    }
-
-    public List<Node> getChildren() {
-//        logger.debug("getChildren()");
-        return this.children;
     }
 
     public Node getParent() {
@@ -47,11 +36,4 @@ public class Node {
         this.parent = parent;
     }
 
-    public Polygon getPolygon() {
-        if (polygon == null) {
-//            return mbr.toGeometry();
-            return toGeometry(mbr);
-        }
-        return polygon;
-    }
 }

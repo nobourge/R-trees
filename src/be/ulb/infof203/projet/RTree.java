@@ -2,12 +2,11 @@ package be.ulb.infof203.projet;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.geometry.DirectPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +42,8 @@ public class RTree {
     //(6) All leaves appear on the same level.
 
     private static final Logger logger = LoggerFactory.getLogger(RTree.class);
-    private final Node root;
-
+    private final GenericNode root;
     // as every leaf is at the same level, the tree depth is the same as the tree height & the leaf depth
-
     private final int maxDepth;
     private final int minDepth;
     private int depth;
@@ -56,9 +53,6 @@ public class RTree {
     private int leafQuantity;
     private int rNodeQuantity;
 
-    private int mode;
-
-
     //main constructor
     public RTree(int maxChildren, int minChildren, int maxDepth, int minDepth) {
         logger.debug("RTree()");
@@ -66,7 +60,7 @@ public class RTree {
         this.minDepth = minDepth;
         this.maxChildren = maxChildren;
         this.minChildren = minChildren;
-        this.root = new RNode();
+        this.root = new GenericNode();
         leafQuantity = 0;
         rNodeQuantity = 0;
         this.depth = 0;
@@ -97,20 +91,21 @@ public class RTree {
             //else :
                 //return null
 
-    public Node addLeaf(Node rnode
+    public GenericNode addLeaf(GenericNode rnode
             , String label
-            , Polygon polygon
+            , MultiPolygon polygon
             , String mode
                         ) {
+        //
         logger.debug("addLeaf()");
-        if (rnode.getChildren() == null ||rnode.getChildren().size()==0 || rnode.getChildren().get(0) instanceof RLeaf) {
+        if (rnode.isLeaf()) {
             // bottom level is reached -> create leaf
-            rnode.getChildren().add(new RLeaf(polygon, label));
+            rnode.getChildren().add(new GenericNode(polygon, label));
             leafQuantity++;
             logger.debug("leafQuantity: " + leafQuantity);
         } else {
-            RNode node = chooseNode(rnode, polygon);
-            Node new_node = addLeaf(node, label, polygon, mode);
+            GenericNode node = chooseNode(rnode, polygon);
+            GenericNode new_node = addLeaf(node, label, polygon, mode);
             if (new_node != null) {
                 rnode.getChildren().add(new_node);
 //                rnode.updateMBR(polygon);
@@ -134,39 +129,38 @@ public class RTree {
         return rnode;
     }
 
-    private RNode splitQuadratic(RNode rnode) {
+    private GenericNode splitQuadratic(GenericNode rnode) {
         logger.debug("splitQuadratic()");
 
-        List<Node> children = rnode.getChildren();
+//        List<Node> children = rnode.getChildren();
+        List<GenericNode> children = rnode.getChildren();
         int numChildren = children.size();
 
         if (numChildren <= 1) {
             return null;
         }
+        GenericNode[] seeds = pickSeeds(children);
 
-        Node[] seeds = pickSeeds(children);
-
-        RNode node1 = new RNode(Collections.singletonList(seeds[0]));
-        RNode node2 = new RNode(Collections.singletonList(seeds[1]));
+        GenericNode node1 = new GenericNode(Collections.singletonList(seeds[0]));
+        GenericNode node2 = new GenericNode(Collections.singletonList(seeds[1]));
 
         children.remove(seeds[0]);
         children.remove(seeds[1]);
 
         while (!children.isEmpty()) {
             if (node1.getChildren().size() + children.size() == minChildren) {
-                for (Node child : children) {
+                for (GenericNode child : children) {
                     node1.addChild(child);
                 }
                 children.clear();
                 break;
             } else if (node2.getChildren().size() + children.size() == minChildren) {
-                for (Node child : children) {
+                for (GenericNode child : children) {
                     node2.addChild(child);
                 }
                 children.clear();
                 break;
             }
-
             double cost1 = quadraticCost(node1, children);
             double cost2 = quadraticCost(node2, children);
 
@@ -176,14 +170,13 @@ public class RTree {
                 node2.addChild(children.remove(0));
             }
         }
-
         node1.updateMBR();
         node2.updateMBR();
 
-        RNode parent = rnode.getParent();
+        GenericNode parent = rnode.getParent();
 
         if (parent == null) {
-            parent = new RNode(new ArrayList<>());
+            parent = new GenericNode(new ArrayList<>());
             parent.addChild(node1);
             parent.addChild(node2);
             return parent;
@@ -192,15 +185,15 @@ public class RTree {
             parent.addChild(node1);
             parent.addChild(node2);
             if (parent.getChildren().size() > maxChildren) {
-                splitNode(mode, parent);
+                splitQuadratic(parent);
             }
             return null;
         }
     }
 
-    private Node[] pickSeeds(List<Node> children) {
+    private GenericNode[] pickSeeds(List<GenericNode> children) {
         logger.debug("pickSeeds()");
-        Node[] seeds =new Node[2];
+        GenericNode[] seeds =new GenericNode[2];
         double maxDistance = 0.0;
         for (int i = 0; i < children.size(); i++) {
             for (int j = i + 1 ; j < children.size(); j++) {
@@ -215,20 +208,20 @@ public class RTree {
         return seeds;
     }
 
-    private  double quadraticCost(RNode node, List<Node> children) {
+    private  double quadraticCost(GenericNode node, List<GenericNode> children) {
         logger.debug("quadraticCost()");
-        ReferencedEnvelope mbr = node.getMBR();
+        Envelope mbr = node.getMBR();
         double area = mbr.getArea();
 
-        ReferencedEnvelope union = mbr;
-        for (Node child : children) {
+        Envelope union = mbr;
+        for (GenericNode child : children) {
             union.expandToInclude(child.getMBR());
         }
         double enlargedArea = union.getArea();
         return enlargedArea - area;
     }
 
-    private RNode splitLinear(RNode rnode) {
+    private GenericNode splitLinear(GenericNode rnode) {
         // Node Splitting
         //In order to add a new entry to a full
         //node containing M entries, it is necessary
@@ -257,12 +250,13 @@ public class RTree {
         int numChildren = rnode.getChildren().size();
         int midIndex = numChildren / 2;
 
-        List<Node> newChildren = new ArrayList<>();
+//        List<Node> newChildren = new ArrayList<>();
+        List<GenericNode> newChildren = new ArrayList<>();
         for (int i = midIndex; i < numChildren; i++){
             newChildren.add(rnode.getChildren().get(i));
         }
         rnode.getChildren().subList(midIndex, numChildren).clear();
-        RNode newNode = new RNode(newChildren);
+        GenericNode newNode = new GenericNode(newChildren);
 
         for (int i=0; i < rnode.getChildren().size();i++){
             rnode.getMBR().expandToInclude(rnode.getChildren().get(i).getMBR());
@@ -273,31 +267,29 @@ public class RTree {
     return newNode;
     }
 
-    private RNode chooseNode(Node rnode, Polygon polygon){
-//    private RNode chooseNode(Node rnode, MultiPolygon polygon){
-//    private RNode chooseNode(Node rnode, ReferencedEnvelope ToInsertEnvelope){
+    private GenericNode chooseNode(GenericNode rnode, MultiPolygon polygon){
+        //  identifier le nœud
+        //pour lequel l’insertion du nouveau polygone minimisera l’augmentation du MBR
         logger.debug("chooseNode()");
         double minArea = Double.POSITIVE_INFINITY;
-        RNode result = null;
-        for (Node childNode : rnode.getChildren()) {
-            ReferencedEnvelope childNodeEnvelope = childNode.getMBR();
-            ReferencedEnvelope ToInsertEnvelope = new ReferencedEnvelope(toEnvelope(polygon));
-//            Polygon childNodePolygon = convertToPolygon(childNodeEnvelope);   // fixme: convertToPolygon ?
-            Polygon childNodePolygon = childNode.getPolygon();
+        GenericNode result = null;
+        for (GenericNode childNode : rnode.getChildren()) {
+            Envelope childNodeEnvelope = childNode.getMBR();
+            Envelope ToInsertEnvelope = new Envelope(toEnvelope(polygon));
+            MultiPolygon childNodePolygon = childNode.getPolygon();
             if (childNodePolygon.contains(polygon)) {
-                return (RNode) childNode;
+                return childNode;
             } else {
-//                double area = childNodeEnvelope.intersection(convertToEnvelope(polygon)).getArea();  // fixme: convertToEnvelope ?
                 double area = childNodeEnvelope.intersection(ToInsertEnvelope).getArea();
                 if (area < minArea) {
                     minArea = area;
-                    result = (RNode) childNode;
+                    result = childNode;
                 }
             }
         }
         return result;
     }
-    private RLeaf chooseLeaf(RNode rnode, RLeaf leaf) {
+    private GenericNode chooseLeaf(GenericNode rnode, GenericNode leaf) {
         // Algorithm ChooseLeaf.
         // Select a leaf node
         //in which to place a new index entry E.
@@ -318,52 +310,31 @@ public class RTree {
 
         logger.debug("chooseLeaf()");
         double minEnlargement = Double.POSITIVE_INFINITY;
-        RLeaf result = null;
-        for (Node childNode : rnode.getChildren()) {
-            ReferencedEnvelope childNodeEnvelope = childNode.getMBR();
+        GenericNode result = null;
+        for (GenericNode childNode : rnode.getChildren()) {
+            Envelope childNodeEnvelope = childNode.getMBR();
             double childNodeEnvelopeArea = childNodeEnvelope.getArea();
-//            ReferencedEnvelope expandedEnvelope = nodeEnvelope.expandToInclude(leaf.getMBR());
             childNodeEnvelope.expandToInclude(leaf.getMBR());
             double enlargement = childNodeEnvelope.getArea() - childNodeEnvelopeArea;
             if (enlargement < minEnlargement) {
                 minEnlargement = enlargement;
-                result = (RLeaf) childNode;
+                result = childNode;
             } else if (enlargement == minEnlargement && result != null) {
                 if (childNodeEnvelope.intersection(leaf.getMBR()).getArea() < result.getMBR().intersection(leaf.getMBR()).getArea()) {
-                    result = (RLeaf) childNode;
+                    result = childNode;
                 }
             }
         }
         return result;
     }
 
-
-//  todo: see ReferencedEnvelope.expandToInclude
-
-//    public ReferencedEnvelope expandToInclude(ReferencedEnvelope other) {
-//        if (other == null) {
-//            return new ReferencedEnvelope(this);
-//        }
-//
-//        double xmin = Math.min(this.getMinX(), other.getMinX());
-//        double ymin = Math.min(this.getMinY(), other.getMinY());
-//        double xmax = Math.max(this.getMaxX(), other.getMaxX());
-//        double ymax = Math.max(this.getMaxY(), other.getMaxY());
-//        return new ReferencedEnvelope(xmin, xmax, ymin, ymax, this.getCoordinateReferenceSystem());
-//    }
-
-    private void splitNode(int mode, RNode node) {
-        // todo
-    }
-
-
-    public Node getRoot() {
+    public GenericNode getRoot() {
         return root;
     }
 
-    public List<RLeaf> search(Point point) {
+    public List<GenericNode> search(Point point) {
         logger.debug("search()");
-        List<RLeaf> result = new ArrayList<>();
+        List<GenericNode> result = new ArrayList<>();
         result = searchRecursive(point
                 , root
                 , result
@@ -374,41 +345,26 @@ public class RTree {
         return result;
     }
 
-    public List<RLeaf> searchRecursive(Point point
-            , Node node
-            , List<RLeaf> result
-    , int depth) {
-        /*if (node instanceof RLeaf) {
-            RLeaf leaf = (RLeaf) node;
-            if (leaf.getPolygon().contains(point)) {
-                result.add(leaf);
-            }
-        } else {
-            RNode rnode = (RNode) node;
-            for (Node child : rnode.getChildren()) {
-                // Ici, le DirectPosition c'est intellij qui te met une error si tu le met
-                // mais ça ne devrait pas poser de problème
-                if (child.getMBR().contains((DirectPosition) point)) {
-                    searchRecursive(point, child, result);
-                }
-            }
-        }*/
+    public List<GenericNode> searchRecursive(Point point
+                                        , GenericNode node
+                                        , List<GenericNode> result
+                                        , int depth
+                                        ) {
+
         logger.debug("search() recursive");
-        if (node instanceof RLeaf) {
-            logger.debug("RLeaf");
-                RLeaf leaf = (RLeaf) node;
-                if (leaf.getPolygon().contains(point)) {
+        if (node.isLeaf()) {
+            logger.debug("in RLeaf");
+                if (node.getPolygon().contains(point)) {
                     logger.debug("RLeaf contains point");
-                    result.add(leaf);
-                    return result;
+                    result.add(node);
                 }
-            } else if (node instanceof RNode) {
-            logger.debug("RNode");
+                return result;
+        } else {
+            logger.debug("in RNode");
             depth++;
             logger.debug("search() recursive depth: " + depth);
-                RNode rnode = (RNode) node;
-                for (Node child : rnode.getChildren()) {
-                    if (child.getMBR().contains((DirectPosition) point)) {
+                for (GenericNode child : node.getChildren()) {
+                    if (child.getMBR().contains(point.getX(), point.getY())) {
                         searchRecursive(point, child, result, depth);
                     }
                 }
@@ -425,18 +381,12 @@ public class RTree {
             while( iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
                 // feature has attribute MultiPolygon
-                MultiPolygon multiPolygon = (MultiPolygon) feature.getDefaultGeometry(); // getDefaultGeometry returns a Geometry Object
-
-//                Polygon polygon = (Polygon) feature.getDefaultGeometry(); // Exception in thread "main" java.lang.ClassCastException: class org.locationtech.jts.geom.MultiPolygon cannot be cast to class org.locationtech.jts.geom.Polygon (org.locationtech.jts.geom.MultiPolygon and org.locationtech.jts.geom.Polygon are in unnamed module of loader 'app')
+                MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry(); // getDefaultGeometry returns a Geometry Object
                 String id = Objects.toString(feature.getAttribute("id"));
-
-                for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
-                    Polygon polygon = (Polygon) multiPolygon.getGeometryN(i);
-                    addLeaf(root
-                            , id + "_" + i
-                            , polygon
-                            , mode);
-                }
+                addLeaf(root
+                        , id
+                        , polygon
+                        , mode);
             }
         }
     }

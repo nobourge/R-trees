@@ -1,19 +1,19 @@
 package be.ulb.infof203.projet;
 
-import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Envelope;
-
-import java.awt.*;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
 public class RLeaf extends Node {
     private static final Logger logger = LoggerFactory.getLogger(RLeaf.class);
-    private Polygon polygon;
+    private MultiPolygon polygon;
 //    private Envelope mbr;
     private Rectangle mbr;
     private String label;
 
-    public RLeaf(Polygon polygon, String label) {
+    public RLeaf(MultiPolygon polygon, String label) {
         logger.debug("RLeaf()");
         this.polygon = polygon;
         Envelope envelope = polygon.getEnvelopeInternal();
@@ -24,7 +24,7 @@ public class RLeaf extends Node {
         this.label = label;
     }
 
-    public Polygon getPolygon() {
+    public MultiPolygon getPolygon() {
         logger.debug("getPolygon()");
         return this.polygon;
     }

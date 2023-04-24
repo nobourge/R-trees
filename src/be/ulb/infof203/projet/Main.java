@@ -143,9 +143,11 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         logger.debug("main()");
+//        String filename ="resources/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
         String filename ="resources/sh_statbel_statistical_sectors_20210101/sh_statbel_statistical_sectors_20210101.shp";
         // iterative search: 165 ms
         // rtree search:
+
         File file = new File(filename);
         if (!file.exists())
             throw new RuntimeException("Shapefile does not exist.");
@@ -180,8 +182,8 @@ public class Main {
 //                         , r.nextInt((int) global_bounds.getMinY()
 //                                    , (int) global_bounds.getMaxY()));
 
-//        String mode = "iterative";
-        String mode = "quadratic";
+        String mode = "iterative";
+//        String mode = "quadratic";
 //        String mode = "linear";
 
         SimpleFeature target = (SimpleFeature) search(getSimpleFeatureCollection(filename), p, mode);
