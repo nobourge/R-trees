@@ -1,7 +1,20 @@
 package be.ulb.infof203.projet;
 
+import org.geotools.data.FileDataStore;
+import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.geometry.jts.GeometryBuilder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
+import org.geotools.styling.SLD;
+import org.geotools.styling.Style;
+import org.geotools.swing.JMapFrame;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
@@ -10,6 +23,9 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +34,8 @@ import java.util.Objects;
 import static org.geotools.geometry.jts.JTS.toEnvelope;
 
 public class RTree {
+//    todo: replace GenericNode with correct classes
+
     // (1) Every leaf node contains between m
     //and M index records unless it is the
     //root.
@@ -98,12 +116,13 @@ public class RTree {
                         ) {
         //
         logger.debug("addLeaf()");
-        if (rnode.isLeaf()) {
-            // bottom level is reached -> create leaf
+        if (rnode.getChildren().size()==0 || rnode.getChildren().get(0).isLeaf()){
+            logger.debug("bottom level is reached -> create leaf");
             rnode.getChildren().add(new GenericNode(polygon, label));
             leafQuantity++;
             logger.debug("leafQuantity: " + leafQuantity);
         } else {
+            logger.debug("rnode");
             GenericNode node = chooseNode(rnode, polygon);
             GenericNode new_node = addLeaf(node, label, polygon, mode);
             if (new_node != null) {
@@ -269,27 +288,9 @@ public class RTree {
 
     private GenericNode chooseNode(GenericNode rnode, MultiPolygon polygon){
         //  identifier le nœud
-        //pour lequel l’insertion du nouveau polygone minimisera l’augmentation du MBR
-        logger.debug("chooseNode()");
-        double minArea = Double.POSITIVE_INFINITY;
-        GenericNode result = null;
-        for (GenericNode childNode : rnode.getChildren()) {
-            Envelope childNodeEnvelope = childNode.getMBR();
-            Envelope ToInsertEnvelope = new Envelope(toEnvelope(polygon));
-            MultiPolygon childNodePolygon = childNode.getPolygon();
-            if (childNodePolygon.contains(polygon)) {
-                return childNode;
-            } else {
-                double area = childNodeEnvelope.intersection(ToInsertEnvelope).getArea();
-                if (area < minArea) {
-                    minArea = area;
-                    result = childNode;
-                }
-            }
-        }
-        return result;
-    }
-    private GenericNode chooseLeaf(GenericNode rnode, GenericNode leaf) {
+        //  pour lequel l’insertion du nouveau polygone
+        //  minimisera l’augmentation du MBR
+
         // Algorithm ChooseLeaf.
         // Select a leaf node
         //in which to place a new index entry E.
@@ -307,24 +308,37 @@ public class RTree {
         //CL4. [Descend until a leaf is reached.]
         // Set N to be the child node pointed to by F.p
         // and repeat from CL2
+        logger.debug("chooseNode()");
 
-        logger.debug("chooseLeaf()");
+        Envelope toInsertEnvelope = polygon.getEnvelopeInternal();
         double minEnlargement = Double.POSITIVE_INFINITY;
         GenericNode result = null;
         for (GenericNode childNode : rnode.getChildren()) {
             Envelope childNodeEnvelope = childNode.getMBR();
-            double childNodeEnvelopeArea = childNodeEnvelope.getArea();
-            childNodeEnvelope.expandToInclude(leaf.getMBR());
-            double enlargement = childNodeEnvelope.getArea() - childNodeEnvelopeArea;
-            if (enlargement < minEnlargement) {
-                minEnlargement = enlargement;
-                result = childNode;
-            } else if (enlargement == minEnlargement && result != null) {
-                if (childNodeEnvelope.intersection(leaf.getMBR()).getArea() < result.getMBR().intersection(leaf.getMBR()).getArea()) {
+            MultiPolygon childNodePolygon = childNode.getPolygon();
+            if (childNodePolygon.contains(polygon)) {
+                return childNode;
+            } else {
+//                double area = childNodeEnvelope.intersection(toInsertEnvelope).getArea();
+                // deepcopy of childNodeEnvelope:
+                Envelope childNodeEnvelopeExpanded = new Envelope(childNodeEnvelope);
+                childNodeEnvelopeExpanded.expandToInclude(toInsertEnvelope);
+                double childNodeEnvelopeArea = childNodeEnvelope.getArea();
+                double childNodeEnvelopeAreaEnlarged = childNodeEnvelopeExpanded.getArea();
+                double enlargement = childNodeEnvelopeAreaEnlarged - childNodeEnvelopeArea;
+                if (enlargement < minEnlargement) {
+                    minEnlargement = enlargement;
                     result = childNode;
+                } else if (enlargement == minEnlargement
+                        && result != null
+                        && (childNodeEnvelope.intersection(toInsertEnvelope).getArea()
+                        < result.getMBR().intersection(toInsertEnvelope).getArea())) {
+                        result = childNode;
+
                 }
             }
         }
+
         return result;
     }
 
@@ -361,11 +375,11 @@ public class RTree {
                 return result;
         } else {
             logger.debug("in RNode");
-            depth++;
             logger.debug("search() recursive depth: " + depth);
+            logger.debug("children quantity: " + node.getChildren().size());
                 for (GenericNode child : node.getChildren()) {
                     if (child.getMBR().contains(point.getX(), point.getY())) {
-                        searchRecursive(point, child, result, depth);
+                        searchRecursive(point, child, result, depth++);
                     }
                 }
             }
@@ -373,13 +387,16 @@ public class RTree {
     }
 
     // build tree
-    public void addFeatureCollection(SimpleFeatureCollection allFeatures, String mode) {
+    public void addFeatureCollection(SimpleFeatureCollection allFeatures
+            , String mode
+            , SimpleFeatureSource featureSource) {
         logger.debug("addFeatureCollection()");
 
 
         try ( SimpleFeatureIterator iterator = allFeatures.features() ){
             while( iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
+                display(feature, featureSource);
                 // feature has attribute MultiPolygon
                 MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry(); // getDefaultGeometry returns a Geometry Object
                 String id = Objects.toString(feature.getAttribute("id"));
@@ -387,7 +404,65 @@ public class RTree {
                         , id
                         , polygon
                         , mode);
+
             }
         }
+    }
+
+    public static SimpleFeatureCollection getSimpleFeatureCollection(String filename) throws IOException {
+        File file = new File(filename);
+        if (!file.exists())
+            throw new RuntimeException("Shapefile does not exist.");
+
+        // create a map content and add our shapefile to it
+        FileDataStore store = FileDataStoreFinder.getDataStore(file); // store is a ShapefileDataStore
+        //
+        SimpleFeatureSource featureSource = store.getFeatureSource(); // featureSource is a ShapefileFeatureSource
+
+        SimpleFeatureCollection all_features = featureSource.getFeatures();
+
+        store.dispose(); // close the store
+
+        ReferencedEnvelope global_bounds = featureSource.getBounds();
+        logger.info("Global bounds: "+global_bounds);
+
+        return all_features;
+    }
+
+    public void display(SimpleFeature target, SimpleFeatureSource featureSource) {
+        GeometryBuilder gb = new GeometryBuilder();
+
+        MapContent map = new MapContent();
+        map.setTitle("Projet INFO-F203");
+
+        Style style = SLD.createSimpleStyle(featureSource.getSchema());
+        Layer layer = new FeatureLayer(featureSource, style);
+        map.addLayer(layer);
+
+        ListFeatureCollection collection = new ListFeatureCollection(featureSource.getSchema());
+        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureSource.getSchema());
+
+
+        // Add target polygon
+        collection.add(target);
+        // Add MBR
+        if (target !=null) {
+            featureBuilder.add(gb.box(target.getBounds().getMinX(),
+                    target.getBounds().getMinY(),
+                    target.getBounds().getMaxX(),
+                    target.getBounds().getMaxY()
+            ));
+
+            //collection.add(featureBuilder.buildFeature(null));
+
+            collection.add(featureBuilder.buildFeature(null));
+        }
+
+        Style style2 = SLD.createLineStyle(Color.red, 2.0f);
+        Layer layer2 = new FeatureLayer(collection, style2);
+        map.addLayer(layer2);
+
+        // Now display the map
+        JMapFrame.showMap(map);
     }
 }

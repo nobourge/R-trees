@@ -41,15 +41,10 @@ public class GenericNode {
         children = null;
         this.polygon = polygon;
     }
-
-
-
     public GenericNode(List<GenericNode> children) {
         this.children = children;
         updateMBR();
-
     }
-
     public GenericNode(MultiPolygon polygon, String label) {
         logger.debug("GenericNode()");
         children = null;
@@ -61,7 +56,10 @@ public class GenericNode {
         logger.debug("updateMBR()");
 
         if (children.size() == 0) {
-            mbr = null;
+            if (polygon == null) {
+                logger.error("node must have minimum 1 child or a polygon");
+            }
+            mbr = polygon.getEnvelopeInternal();
             return;
         }
 
@@ -105,7 +103,27 @@ public class GenericNode {
 
     public Envelope getMBR() {
         logger.debug("getMBR()");
+        if (mbr == null) {
+            logger.error(" id: " + getLabel());
+            logger.error(" depth: " + getDepth());
+            logger.error("mbr null");
+
+            updateMBR();
+            if (mbr == null) {
+                logger.error("updateMBR did not work");
+            }
+        }
         return mbr;
+    }
+
+    public int getDepth() {
+        int depth=0;
+        GenericNode parentCurrent = parent;
+        while (!parentCurrent.isRoot()) {
+            parentCurrent = parent.getParent();
+            depth++;
+        }
+        return depth;
     }
 
     public void setParent(GenericNode parent) {

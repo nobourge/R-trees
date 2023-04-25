@@ -35,29 +35,6 @@ import java.util.Objects;
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-//    public static RTree buildRTree(SimpleFeatureCollection all_features){
-//        RTree rTree = new RTree(4, 4, 4, 4);
-//
-//
-//        try ( SimpleFeatureIterator iterator = all_features.features() ){
-//            while( iterator.hasNext()){
-//                SimpleFeature feature = iterator.next();
-//
-////                MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
-//                Polygon polygon = (Polygon) feature.getDefaultGeometry();
-////                Node node = new Node();
-//                // random String
-//                String id = Objects.toString(feature.getAttribute("id"));
-//                rTree.addLeaf(rTree.getRoot()
-////                        , polygon.getEnvelopeInternal()
-//                        , id
-//                        , polygon
-//                );
-//            }
-//        }
-//        return rTree;
-//    }
-
     public static SimpleFeatureCollection getSimpleFeatureCollection(String filename) throws IOException {
         File file = new File(filename);
         if (!file.exists())
@@ -84,7 +61,7 @@ public class Main {
         Filter filter = filterFactory.equals(filterFactory.property("ID"), filterFactory.literal(id));
         return indexedCollection.subCollection(filter).features().next();
     }
-    public static Object search(SimpleFeatureCollection all_features, Point point, String mode) throws Exception {
+    public static Object search(SimpleFeatureCollection all_features, Point point, String mode, SimpleFeatureSource featureSource) throws Exception {
         logger.debug("search()");
 
         System.out.println(all_features.size()+" features");
@@ -93,13 +70,14 @@ public class Main {
             logger.debug("mode: iterative");
             return searchIterative(all_features, point);
         } else {
-            return searchTree(all_features, point, mode);
+            return searchTree(all_features, point, mode, featureSource );
         }
     }
 
     private static SimpleFeature searchTree(SimpleFeatureCollection allFeatures
             , Point point
-            , String mode) throws Exception {
+            , String mode
+            , SimpleFeatureSource featureSource) throws Exception {
         logger.debug("searchTree()");
         // chrono start:
         long start = System.currentTimeMillis();
@@ -107,7 +85,8 @@ public class Main {
         RTree rTree = new RTree(4, 4, 4, 4);
 
         rTree.addFeatureCollection(allFeatures
-        , mode);
+        , mode
+        , featureSource);
 
         target = getFeatureById(allFeatures, rTree.search(point).get(0).getLabel());
         // chrono stop:
@@ -145,7 +124,9 @@ public class Main {
         logger.debug("main()");
 //        String filename ="resources/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
         String filename ="resources/sh_statbel_statistical_sectors_20210101/sh_statbel_statistical_sectors_20210101.shp";
-        // iterative search: 165 ms
+        // iterative search in ms:
+        // 306
+        // 165
         // rtree search:
 
         File file = new File(filename);
@@ -182,11 +163,14 @@ public class Main {
 //                         , r.nextInt((int) global_bounds.getMinY()
 //                                    , (int) global_bounds.getMaxY()));
 
-        String mode = "iterative";
-//        String mode = "quadratic";
+//        String mode = "iterative";
+        String mode = "quadratic";
 //        String mode = "linear";
 
-        SimpleFeature target = (SimpleFeature) search(getSimpleFeatureCollection(filename), p, mode);
+        SimpleFeature target = (SimpleFeature) search(getSimpleFeatureCollection(filename)
+                                                    , p
+                                                    , mode
+                                                    , featureSource);
 
         if (target == null)
             System.out.println("util.Point not in any polygon!");

@@ -12,16 +12,18 @@ import org.slf4j.LoggerFactory;
 import static org.geotools.geometry.jts.JTS.toGeometry;
 
 
-public class Node {
+abstract class Node {
     private static final Logger logger = LoggerFactory.getLogger(Node.class);
     private Node parent;
+    private Envelope mbr;
+
 
     public Node() {
         logger.debug("Node()");
     }
-    private Envelope mbr;
-    private MultiPolygon polygon;
-
+    protected void setMBR(Envelope envelopeInternal) {
+        mbr = envelopeInternal;
+    }
     protected Envelope getMBR() {
         return this.mbr;
     }
@@ -35,5 +37,8 @@ public class Node {
         logger.debug("setParent()");
         this.parent = parent;
     }
+
+    abstract List<Node> getChildren();
+
 
 }

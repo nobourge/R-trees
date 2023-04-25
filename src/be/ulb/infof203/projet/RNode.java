@@ -24,58 +24,57 @@ public class RNode extends Node{
     private static final Logger logger = LoggerFactory.getLogger(RNode.class);
 
     //list of children of type RNode or RLeaf:
-    private List<RNode> childrenRnode;
-    private List<RLeaf> childrenRLeaf;
+//    private List<RNode> children;
+//    private List<RLeaf> children;
+    private List<Node> children;
 
     private Envelope mbr; // Minimum Bounding Rectangle
 
 //    public RNode(List<Node> children) {
-
-
-    public RNode(List<RLeaf> childrenRleaf) {
-        logger.debug("RNode()");
-
-        this.childrenRLeaf = childrenRleaf;
-        updateMBR();
-    }
+//    public RNode(List<RLeaf> childrenRleaf) {
+//        logger.debug("RNode()");
+//
+//        this.childrenRLeaf = childrenRleaf;
+//        updateMBR();
+//    }
     public RNode() {
         logger.debug("RNode()");
-        childrenRnode = new ArrayList<RNode>();
-        childrenRLeaf = new ArrayList<RLeaf>();
+//        childrenRnode = new ArrayList<RNode>();
+//        childrenRLeaf = new ArrayList<RLeaf>();
+//        children = new ArrayList<Node>();
     }
-    public void addChild(RNode child) {
+//    public void addChild(RNode child) {
+//        logger.debug("addChild()");
+//        children = new ArrayList<RNode>();
+//
+//        children.add(child);
+//        child.setParent(this);
+//        updateMBR();
+//    }
+//    public void addChild(RLeaf child) {
+//        logger.debug("addChild()");
+//        childrenRLeaf.add(child);
+//        child.setParent(this);
+//        updateMBR();
+//    }
+    public void addChild(Node child) {
         logger.debug("addChild()");
-        childrenRnode.add(child);
+        children.add(child);
         child.setParent(this);
         updateMBR();
     }
-
-    public void addChild(RLeaf child) {
-        logger.debug("addChild()");
-        childrenRLeaf.add(child);
-        child.setParent(this);
-        updateMBR();
-    }
-
-    public List<RNode> getChildrenRnode() {
-        logger.debug("getChildren()");
-        return childrenRnode;
-    }
-    public List<RLeaf> getChildren() {
-        logger.debug("getChildren()");
-        return childrenRLeaf;
-    }
-
-
-    public void addLeaf(RLeaf leaf) {
-        logger.debug("addLeaf()");
-        childrenRLeaf.add(leaf);
-        updateMBR();
-    }
+//    public List<RNode> getChildrenRnode() {
+//        logger.debug("getChildren()");
+//        return childrenRnode;
+//    }
+//    public List<RLeaf> getChildren() {
+//        logger.debug("getChildren()");
+//        return childrenRLeaf;
+//    }
 
     public void removeChild(RNode child) {
         logger.debug("removeChild()");
-        childrenRnode.remove(child);
+        children.remove(child);
         updateMBR();
     }
 
@@ -103,5 +102,10 @@ public class RNode extends Node{
 
     public void setMBR(Envelope childEnvelope) {
         this.mbr = childEnvelope;
+    }
+
+    @Override
+    List<Node> getChildren() {
+        return children;
     }
 }
