@@ -79,6 +79,7 @@ public class RNode extends Node{
                 throw new IllegalArgumentException("Child is not of the same type as the other children");
             }
         }
+        //TODO FIX Error dans RTreeTest
         children.add(child);
         child.setParent(this);
         showChildren();

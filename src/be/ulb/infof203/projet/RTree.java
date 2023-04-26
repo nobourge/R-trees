@@ -26,34 +26,13 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class RTree {
-    // (1) Every leaf node contains between m
-    //and M index records unless it is the
-    //root.
-
-    //(2) For each index record
-    //(I, tuple-identifier) in a leaf node, I is
-    //the smallest rectangle that spatially
-    //contains the n-dimensional data object
-    //represented by the indicated tuple.
-
-    //(3) Every non-leaf node has between m
-    //and M children unless it is the root.
-
-    //(4) For each entry (/, child —pointer ) in a
-    //non-leaf node,
-    // I is the smallest rectangle that spatially contains
-    // the rectangles in the child node.
-
-    //(5) The root node has at least two children
-    //unless it is a leaf.
-
-    //(6) All leaves appear on the same level.
 
     private static final Logger logger = LoggerFactory.getLogger(RTree.class);
     private RNode root; // enonce: des nœuds (dont une racine)
@@ -180,7 +159,10 @@ public class RTree {
         children.remove(seeds[0]);
         children.remove(seeds[1]);
 
-        // todo: check if children is empty
+        if (children.isEmpty()) {
+            return null;
+        }
+
         // todo: check warnings
         while (!children.isEmpty()) {
             if (node1.getChildren().size() + children.size() == minChildren) {
@@ -505,4 +487,5 @@ public class RTree {
         // Now display the map
         JMapFrame.showMap(map);
     }
+
 }
