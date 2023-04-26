@@ -80,7 +80,7 @@ public class RNode extends Node{
 
     public void removeChild(RLeaf child) {
         logger.debug("removeChild()");
-        childrenRLeaf.remove(child);
+        children.remove(child);
         updateMBR();
     }
     void updateMBR() {
