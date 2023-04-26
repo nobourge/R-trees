@@ -13,6 +13,10 @@ import java.io.IOException;
 
 public class MainTest {
 
+    /**
+     * This test method tests the searchTree method by checking if it returns a feature with the expected geometry.
+     * @throws IOException if there is an error reading the file
+     * @throws Exception if there is an error in the searchTree method*/
     @Test
     public void testSearchTree() throws IOException, Exception{
         String fileName = "";
@@ -25,6 +29,10 @@ public class MainTest {
 
     }
 
+    /**
+     * This test method tests the searchTree method by providing an invalid search mode, which should throw an Exception.
+     * @throws IOException if there is an error reading the file
+     */
     @Test
     public void testSearchTreeWithInvalidMode() throws IOException {
         String FileName = "";
