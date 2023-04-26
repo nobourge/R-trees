@@ -29,7 +29,6 @@ public class RNode extends Node{
 //    private List<RLeaf> children;
     private List<Node> children;
 
-    private Envelope mbr; // Minimum Bounding Rectangle
 
 //    public RNode(List<Node> children) {
 //    public RNode(List<RLeaf> childrenRleaf) {
@@ -70,9 +69,29 @@ public class RNode extends Node{
 //    }
     public void addChild(Node child) {
         logger.debug("addChild()");
+        logger.debug("child: " + child);
+        logger.debug("child: " + child.getLabel());
+        logger.debug("child type: " + child.getClass());
+        // if child is instance of a class different from the class of the first child
+        // then throw an exception
+        if (!children.isEmpty()) {
+            if (child.getClass() != children.get(0).getClass()) {
+                throw new IllegalArgumentException("Child is not of the same type as the other children");
+            }
+        }
         children.add(child);
         child.setParent(this);
+        showChildren();
         updateMBR();
+    }
+
+    private void showChildren() {
+        logger.debug("showChildren()");
+        for (Node child : children) {
+            logger.debug("child: " + child);
+            logger.debug("child: " + child.getLabel());
+            logger.debug("child type: " + child.getClass());
+        }
     }
 //    public List<RNode> getChildrenRnode() {
 //        logger.debug("getChildren()");
@@ -107,17 +126,18 @@ public class RNode extends Node{
     void updateMBR() {
         logger.debug("updateMBR()");
 
-//        if (children.size() == 0) {
-//            mbr = null;
-//            return;
-//        }
-//
-//        mbr = children.get(0).getMBR();
-//        for (Node child : children) {
-//            Envelope childMBR = child.getMBR();
-//            //
-//            mbr.expandToInclude(childMBR);
-//        }
+        if (children.isEmpty()) {
+            mbr = null;
+            return;
+        }
+
+        mbr = children.get(0).getMBR();
+        for (Node child : children) {
+            Envelope childMBR = child.getMBR();
+            mbr.expandToInclude(childMBR);
+        }
+        logger.debug("mbr: " + mbr);
+        logger.debug("area: " + mbr.getArea());
     }
 
 
@@ -127,7 +147,7 @@ public class RNode extends Node{
 
     @Override
     List<Node> getChildren() {
-
+        logger.debug("getChildren()");
         return children;
 //        return (List<RNode>) children;
     }

@@ -16,11 +16,13 @@ public class RLeaf extends Node {
     public RLeaf(MultiPolygon polygon, String label) {
         logger.debug("RLeaf()");
         this.polygon = polygon;
+
         super.setMBR(polygon.getEnvelopeInternal());
-        // transform Envelope e into Rectangle r
-//        this.mbr = new Rectangle((int)envelope.getMinX(), (int)envelope.getMinY(),
-//                (int)envelope.getWidth(), (int)envelope.getHeight());
+        double area = getMBR().getArea();
+        logger.debug("area: " + area);
         this.label = label;
+        logger.debug("label: " + label);
+        logger.debug("RLeaf() done");
     }
 
     public RLeaf(String Label) {

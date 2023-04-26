@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,13 +61,10 @@ public class RTree {
     private final int maxDepth;
     private final int minDepth;
     private int depth;
-    private int size;
     private final int maxChildren;
     private final int minChildren;
     private int leafQuantity;
     private int rNodeQuantity;
-
-    //main constructor
     public RTree(int maxChildren, int minChildren, int maxDepth, int minDepth) {
         logger.debug("RTree()");
         this.maxDepth = maxDepth;
@@ -77,10 +75,37 @@ public class RTree {
         leafQuantity = 0;
         rNodeQuantity = 0;
         this.depth = 0;
-        this.size = 0;
-
     }
 
+    public int getRNodeQuantity() {
+        return rNodeQuantity;
+    }
+
+    public int getLeafQuantity() {
+        return leafQuantity;
+    }
+
+    public int getNodeQuantity() {
+        return leafQuantity + rNodeQuantity;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+
+    public RNode split(RNode node, String mode) {
+        if (mode.equals("quadratic")) {
+            return splitQuadratic(node);
+        }
+        else if (mode.equals("linear")) {
+            return splitLinear(node);
+        }
+        else {
+            logger.error("Unknown mode: " + mode);
+            return null;
+        }
+    }
     //insertion (addLeaf) : si, après ajout d’une nouvelle feuille, le nombre de feuilles
     //composant un nœud atteint un seuil N fixé, ce nœud sera « coupé en deux » (split),
     //selon une méthode décrite plus bas. Cette division augmentera dès lors de 1 le
@@ -98,58 +123,50 @@ public class RTree {
                 //# a split occurred in addLeaf ,
                 //# a new node is added at this level
                 //node.subnodes . add ( new_node )
-                //expand node . mbr to include polygon
-                //if size ( node . subnodes ) >= N :
-                //return split ( node )
-            //else :
-                //return null
+        //expand node . mbr to include polygon
+        //if size ( node . subnodes ) >= N :
+            //return split ( node )
+        //else :
+            //return null
 
     public RNode addLeaf(RNode rnode
             , String label
             , MultiPolygon polygon
             , String mode
                         ) {
-        //
         logger.debug("addLeaf()");
+        logger.debug("rnode: " + rnode);
+        logger.debug("label: " + label);
         if (rnode.getChildren().isEmpty() || rnode.getChildren().get(0).isLeaf()){
             logger.debug("bottom level is reached -> create leaf");
-            rnode.getChildren().add(new RLeaf(polygon, label));
+            rnode.addChild(new RLeaf(polygon, label));
             leafQuantity++;
             logger.debug("leafQuantity: " + leafQuantity);
-        } else {
-            logger.debug("rnode");
+        }
+        else {
+            logger.debug("still need to go deeper");
             RNode node = chooseNode(rnode, polygon);
-            RNode new_node = addLeaf(node, label, polygon, mode);
-            if (new_node != null) {
-                rnode.getChildren().add(new_node);
+            RNode newNode = addLeaf(node, label, polygon, mode);
+            if (newNode != null) {
+                // a split occurred in addLeaf, a new node is added at this level
+                rnode.getChildren().add(newNode);
                 rNodeQuantity++;
                 logger.debug("rNodeQuantity: " + rNodeQuantity);
             }
-            if (rnode.getChildren().size() >= maxChildren) {
-                if (mode.equals("quadratic")) {
-                    return splitQuadratic(node);
-
-                } else if (mode.equals("linear")) {
-                    return splitLinear(node);
-
-                } else {
-                    logger.error("Unknown mode: " + mode);
-                }
-            } else {
-                return null;
-            }
         }
-        return rnode;
+        rnode.getMBR().expandToInclude(polygon.getEnvelopeInternal());
+        if (rnode.getChildren().size() >= maxChildren) {
+            logger.info("splitting node");
+            return split(rnode, mode);
+        } else {
+            return null;
+        }
     }
 
     private RNode splitQuadratic(RNode rnode) {
-
         logger.debug("splitQuadratic()");
-
-        // node
         List<Node> children = rnode.getChildren();
         int numChildren = children.size();
-
         if (numChildren <= 1) {
             return null;
         }
@@ -163,6 +180,8 @@ public class RTree {
         children.remove(seeds[0]);
         children.remove(seeds[1]);
 
+        // todo: check if children is empty
+        // todo: check warnings
         while (!children.isEmpty()) {
             if (node1.getChildren().size() + children.size() == minChildren) {
                 for (Node child : children) {
@@ -228,12 +247,17 @@ public class RTree {
 
                 double distance = childiEnvelopeCopy.getArea() - childiEnvelopeArea - childjEnvelope.getArea();
                 if (distance > maxDistance) {
+                    logger.debug("i: " + i);
+                    logger.debug("j: " + j);
+                    logger.debug("distance: " + distance);
                     maxDistance = distance;
                     seeds[0] = children.get(i);
                     seeds[1] = children.get(j);
                 }
             }
         }
+        logger.debug("seeds[0]: " + seeds[0]);
+        logger.debug("seeds[1]: " + seeds[1]);
         return seeds;
     }
 
@@ -320,7 +344,6 @@ public class RTree {
         logger.debug("chooseNode()");
 
         Envelope toInsertEnvelope = polygon.getEnvelopeInternal();
-//        List<Node> rnodeChildren = rnode.getChildren();
         if (rnode.getChildren().isEmpty() || rnode.getChildren().get(0) instanceof RLeaf) {
             return (RNode) rnode;
         }
@@ -333,7 +356,6 @@ public class RTree {
             if (childNodePolygon.contains(polygon)) {
                 return (RNode) childNode;
             } else {
-//                double area = childNodeEnvelope.intersection(toInsertEnvelope).getArea();
                 // deepcopy of childNodeEnvelope:
                 Envelope childNodeEnvelopeExpanded = new Envelope(childNodeEnvelope);
                 childNodeEnvelopeExpanded.expandToInclude(toInsertEnvelope);
@@ -411,36 +433,45 @@ public class RTree {
             while( iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
                 display(feature, featureSource);
+                // pause 5 seconds:
+                Thread.sleep(500);
                 // feature has attribute MultiPolygon
                 MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry(); // getDefaultGeometry returns a Geometry Object
-                String id = Objects.toString(feature.getAttribute("id"));
+//                String id = Objects.toString(feature.getAttribute("id"));
+//                String id = Objects.toString(feature.getAttribute("STRING"));
+//                String id = Objects.toString(feature.getAttribute.getID());
+                String id = Objects.toString(feature.getID());
+                logger.debug("id: " + id);
                 addLeaf(root
                         , id
                         , polygon
                         , mode);
+                RTreeDisplayer.displayTerminal(root, 0);
+                RTreeDisplayer.display(this);
 
             }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public static SimpleFeatureCollection getSimpleFeatureCollection(String filename) throws IOException {
         File file = new File(filename);
         if (!file.exists())
-            throw new RuntimeException("Shapefile does not exist.");
-
+            throw new FileNotFoundException("Shapefile does not exist.");
         // create a map content and add our shapefile to it
         FileDataStore store = FileDataStoreFinder.getDataStore(file); // store is a ShapefileDataStore
         //
         SimpleFeatureSource featureSource = store.getFeatureSource(); // featureSource is a ShapefileFeatureSource
 
-        SimpleFeatureCollection all_features = featureSource.getFeatures();
+        SimpleFeatureCollection allFeatures = featureSource.getFeatures();
 
         store.dispose(); // close the store
 
-        ReferencedEnvelope global_bounds = featureSource.getBounds();
-        logger.info("Global bounds: "+global_bounds);
+        ReferencedEnvelope globalBounds = featureSource.getBounds();
+        logger.info("Global bounds: "+globalBounds);
 
-        return all_features;
+        return allFeatures;
     }
 
     public void display(SimpleFeature target, SimpleFeatureSource featureSource) {
@@ -466,16 +497,11 @@ public class RTree {
                     target.getBounds().getMaxX(),
                     target.getBounds().getMaxY()
             ));
-
-            //collection.add(featureBuilder.buildFeature(null));
-
             collection.add(featureBuilder.buildFeature(null));
         }
-
         Style style2 = SLD.createLineStyle(Color.red, 2.0f);
         Layer layer2 = new FeatureLayer(collection, style2);
         map.addLayer(layer2);
-
         // Now display the map
         JMapFrame.showMap(map);
     }
