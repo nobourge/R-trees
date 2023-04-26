@@ -18,9 +18,11 @@ abstract class Node {
     private Envelope mbr;
 
 
-    public Node() {
+    protected Node() {
         logger.debug("Node()");
     }
+
+//    abstract Node(List<Node> children) {}
     protected void setMBR(Envelope envelopeInternal) {
         mbr = envelopeInternal;
     }
@@ -42,6 +44,11 @@ abstract class Node {
     abstract String getLabel();
 
 
+    abstract boolean isLeaf();
 
+    abstract void removeChild(RNode rnode);
 
+    abstract void addChild(RNode node1);
+
+    abstract MultiPolygon getPolygon();
 }

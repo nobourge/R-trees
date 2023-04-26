@@ -18,7 +18,6 @@ import org.geotools.swing.JMapFrame;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +59,7 @@ public class RTree {
     //(6) All leaves appear on the same level.
 
     private static final Logger logger = LoggerFactory.getLogger(RTree.class);
-    private final GenericNode root;
+    private RNode root;
     // as every leaf is at the same level, the tree depth is the same as the tree height & the leaf depth
     private final int maxDepth;
     private final int minDepth;
@@ -78,7 +77,7 @@ public class RTree {
         this.minDepth = minDepth;
         this.maxChildren = maxChildren;
         this.minChildren = minChildren;
-        this.root = new GenericNode();
+        this.root = new RNode();
         leafQuantity = 0;
         rNodeQuantity = 0;
         this.depth = 0;
@@ -109,7 +108,7 @@ public class RTree {
             //else :
                 //return null
 
-    public GenericNode addLeaf(GenericNode rnode
+    public RNode addLeaf(RNode rnode
             , String label
             , MultiPolygon polygon
             , String mode
@@ -118,13 +117,13 @@ public class RTree {
         logger.debug("addLeaf()");
         if (rnode.getChildren().size()==0 || rnode.getChildren().get(0).isLeaf()){
             logger.debug("bottom level is reached -> create leaf");
-            rnode.getChildren().add(new GenericNode(polygon, label));
+            rnode.getChildren().add(new RLeaf(polygon, label));
             leafQuantity++;
             logger.debug("leafQuantity: " + leafQuantity);
         } else {
             logger.debug("rnode");
-            GenericNode node = chooseNode(rnode, polygon);
-            GenericNode new_node = addLeaf(node, label, polygon, mode);
+            RNode node = chooseNode(rnode, polygon);
+            RNode new_node = addLeaf(node, label, polygon, mode);
             if (new_node != null) {
                 rnode.getChildren().add(new_node);
 //                rnode.updateMBR(polygon);
@@ -148,33 +147,34 @@ public class RTree {
         return rnode;
     }
 
-    private GenericNode splitQuadratic(GenericNode rnode) {
+    private RNode splitQuadratic(RNode rnode) {
         logger.debug("splitQuadratic()");
 
-//        List<Node> children = rnode.getChildren();
-        List<GenericNode> children = rnode.getChildren();
+        // node
+        List<Node> children = rnode.getChildren();
         int numChildren = children.size();
 
         if (numChildren <= 1) {
             return null;
         }
-        GenericNode[] seeds = pickSeeds(children);
+        // node
+        RNode[] seeds = pickSeeds(children);
 
-        GenericNode node1 = new GenericNode(Collections.singletonList(seeds[0]));
-        GenericNode node2 = new GenericNode(Collections.singletonList(seeds[1]));
+        RNode node1 = new RNode(Collections.singletonList(seeds[0]));
+        RNode node2 = new RNode(Collections.singletonList(seeds[1]));
 
         children.remove(seeds[0]);
         children.remove(seeds[1]);
 
         while (!children.isEmpty()) {
             if (node1.getChildren().size() + children.size() == minChildren) {
-                for (GenericNode child : children) {
+                for (Node child : children) {
                     node1.addChild(child);
                 }
                 children.clear();
                 break;
             } else if (node2.getChildren().size() + children.size() == minChildren) {
-                for (GenericNode child : children) {
+                for (Node child : children) {
                     node2.addChild(child);
                 }
                 children.clear();
@@ -192,27 +192,28 @@ public class RTree {
         node1.updateMBR();
         node2.updateMBR();
 
-        GenericNode parent = rnode.getParent();
+        Node parent = rnode.getParent();
 
         if (parent == null) {
-            parent = new GenericNode(new ArrayList<>());
-            parent.addChild(node1);
-            parent.addChild(node2);
-            return parent;
+            parent = new RNode(new ArrayList<>());
+            ((RNode) parent).addChild(node1);
+            ((RNode) parent).addChild(node2);
+            return (RNode) parent;
         } else {
             parent.removeChild(rnode);
             parent.addChild(node1);
             parent.addChild(node2);
             if (parent.getChildren().size() > maxChildren) {
-                splitQuadratic(parent);
+                splitQuadratic((RNode) parent);
             }
             return null;
         }
     }
 
-    private GenericNode[] pickSeeds(List<GenericNode> children) {
+    private RNode[] pickSeeds(List<Node> children) {
         logger.debug("pickSeeds()");
-        GenericNode[] seeds =new GenericNode[2];
+//        Node[] seeds =new Node[2];
+        RNode[] seeds =new RNode[2];
         double maxDistance = 0.0;
         for (int i = 0; i < children.size(); i++) {
             for (int j = i + 1 ; j < children.size(); j++) {
@@ -227,20 +228,20 @@ public class RTree {
         return seeds;
     }
 
-    private  double quadraticCost(GenericNode node, List<GenericNode> children) {
+    private  double quadraticCost(RNode node, List<Node> children) {
         logger.debug("quadraticCost()");
         Envelope mbr = node.getMBR();
         double area = mbr.getArea();
 
         Envelope union = mbr;
-        for (GenericNode child : children) {
+        for (Node child : children) {
             union.expandToInclude(child.getMBR());
         }
         double enlargedArea = union.getArea();
         return enlargedArea - area;
     }
 
-    private GenericNode splitLinear(GenericNode rnode) {
+    private Node splitLinear(Node rnode) {
         // Node Splitting
         //In order to add a new entry to a full
         //node containing M entries, it is necessary
@@ -270,12 +271,12 @@ public class RTree {
         int midIndex = numChildren / 2;
 
 //        List<Node> newChildren = new ArrayList<>();
-        List<GenericNode> newChildren = new ArrayList<>();
+        List<Node> newChildren = new ArrayList<>();
         for (int i = midIndex; i < numChildren; i++){
             newChildren.add(rnode.getChildren().get(i));
         }
         rnode.getChildren().subList(midIndex, numChildren).clear();
-        GenericNode newNode = new GenericNode(newChildren);
+        RNode newNode = new RNode(newChildren);
 
         for (int i=0; i < rnode.getChildren().size();i++){
             rnode.getMBR().expandToInclude(rnode.getChildren().get(i).getMBR());
@@ -286,7 +287,7 @@ public class RTree {
     return newNode;
     }
 
-    private GenericNode chooseNode(GenericNode rnode, MultiPolygon polygon){
+    private Node chooseNode(Node rnode, MultiPolygon polygon){
         //  identifier le nœud
         //  pour lequel l’insertion du nouveau polygone
         //  minimisera l’augmentation du MBR
@@ -312,8 +313,8 @@ public class RTree {
 
         Envelope toInsertEnvelope = polygon.getEnvelopeInternal();
         double minEnlargement = Double.POSITIVE_INFINITY;
-        GenericNode result = null;
-        for (GenericNode childNode : rnode.getChildren()) {
+        Node result = null;
+        for (Node childNode : rnode.getChildren()) {
             Envelope childNodeEnvelope = childNode.getMBR();
             MultiPolygon childNodePolygon = childNode.getPolygon();
             if (childNodePolygon.contains(polygon)) {
@@ -342,7 +343,7 @@ public class RTree {
         return result;
     }
 
-    public GenericNode getRoot() {
+    public Node getRoot() {
         return root;
     }
 
@@ -359,9 +360,9 @@ public class RTree {
         return result;
     }
 
-    public List<GenericNode> searchRecursive(Point point
-                                        , GenericNode node
-                                        , List<GenericNode> result
+    public List<Node> searchRecursive(Point point
+                                        , Node node
+                                        , List<Node> result
                                         , int depth
                                         ) {
 
@@ -377,7 +378,7 @@ public class RTree {
             logger.debug("in RNode");
             logger.debug("search() recursive depth: " + depth);
             logger.debug("children quantity: " + node.getChildren().size());
-                for (GenericNode child : node.getChildren()) {
+                for (Node child : node.getChildren()) {
                     if (child.getMBR().contains(point.getX(), point.getY())) {
                         searchRecursive(point, child, result, depth++);
                     }

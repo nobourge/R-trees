@@ -43,7 +43,17 @@ public class RNode extends Node{
 //        childrenRLeaf = new ArrayList<RLeaf>();
           children = new ArrayList<Node>();
     }
-//    public void addChild(RNode child) {
+
+    public RNode(List<Node> nodes) {
+        logger.debug("RNode()");
+//        childrenRnode = rNodes;
+//        childrenRLeaf = new ArrayList<RLeaf>();
+//        children = new ArrayList<Node>();
+        children = nodes;
+        updateMBR();
+    }
+
+    //    public void addChild(RNode child) {
 //        logger.debug("addChild()");
 //        children = new ArrayList<RNode>();
 //

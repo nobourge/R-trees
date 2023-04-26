@@ -41,4 +41,19 @@ public class RLeaf extends Node {
     String getLabel() {
         return label;
     }
+
+    @Override
+    boolean isLeaf() {
+        return true;
+    }
+
+    @Override
+    void removeChild(RNode rnode) {
+
+    }
+
+    @Override
+    void addChild(RNode node1) {
+
+    }
 }
