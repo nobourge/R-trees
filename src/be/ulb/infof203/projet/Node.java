@@ -39,6 +39,9 @@ abstract class Node {
     }
 
     abstract List<Node> getChildren();
+    abstract String getLabel();
+
+
 
 
 }

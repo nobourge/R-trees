@@ -22,17 +22,23 @@ public class RLeaf extends Node {
 //                (int)envelope.getWidth(), (int)envelope.getHeight());
         this.label = label;
     }
+
+    public RLeaf(String Label) {
+        this.label = Label;
+    }
+
     public MultiPolygon getPolygon() {
         logger.debug("getPolygon()");
         return this.polygon;
-    }
-    public String getLabel() {
-        logger.debug("getLabel()");
-        return this.label;
     }
 
     @Override
     List<Node> getChildren() {
         return null;
+    }
+
+    @Override
+    String getLabel() {
+        return label;
     }
 }

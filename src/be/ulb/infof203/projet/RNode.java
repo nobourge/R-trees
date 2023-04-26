@@ -41,7 +41,7 @@ public class RNode extends Node{
         logger.debug("RNode()");
 //        childrenRnode = new ArrayList<RNode>();
 //        childrenRLeaf = new ArrayList<RLeaf>();
-//        children = new ArrayList<Node>();
+          children = new ArrayList<Node>();
     }
 //    public void addChild(RNode child) {
 //        logger.debug("addChild()");
@@ -107,5 +107,10 @@ public class RNode extends Node{
     @Override
     List<Node> getChildren() {
         return children;
+    }
+
+    @Override
+    String getLabel() {
+        return null;
     }
 }
