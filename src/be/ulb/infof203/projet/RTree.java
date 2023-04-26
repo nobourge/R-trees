@@ -30,11 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static org.geotools.geometry.jts.JTS.toEnvelope;
-
 public class RTree {
-//    todo: replace GenericNode with correct classes
-
     // (1) Every leaf node contains between m
     //and M index records unless it is the
     //root.
@@ -59,7 +55,7 @@ public class RTree {
     //(6) All leaves appear on the same level.
 
     private static final Logger logger = LoggerFactory.getLogger(RTree.class);
-    private RNode root;
+    private RNode root; // enonce: des nœuds (dont une racine)
     // as every leaf is at the same level, the tree depth is the same as the tree height & the leaf depth
     private final int maxDepth;
     private final int minDepth;
@@ -115,7 +111,7 @@ public class RTree {
                         ) {
         //
         logger.debug("addLeaf()");
-        if (rnode.getChildren().size()==0 || rnode.getChildren().get(0).isLeaf()){
+        if (rnode.getChildren().isEmpty() || rnode.getChildren().get(0).isLeaf()){
             logger.debug("bottom level is reached -> create leaf");
             rnode.getChildren().add(new RLeaf(polygon, label));
             leafQuantity++;
@@ -126,7 +122,6 @@ public class RTree {
             RNode new_node = addLeaf(node, label, polygon, mode);
             if (new_node != null) {
                 rnode.getChildren().add(new_node);
-//                rnode.updateMBR(polygon);
                 rNodeQuantity++;
                 logger.debug("rNodeQuantity: " + rNodeQuantity);
             }
@@ -148,6 +143,7 @@ public class RTree {
     }
 
     private RNode splitQuadratic(RNode rnode) {
+
         logger.debug("splitQuadratic()");
 
         // node
@@ -157,7 +153,9 @@ public class RTree {
         if (numChildren <= 1) {
             return null;
         }
-        RNode[] seeds = pickSeeds(children);
+        // Dans cette version, on commence par choisir deux « seeds » (pickSeeds),
+        // soit deux nœuds les plus éloignés possible.
+        Node[] seeds = pickSeeds(children);
 
         RNode node1 = new RNode(Collections.singletonList(seeds[0]));
         RNode node2 = new RNode(Collections.singletonList(seeds[1]));
@@ -209,14 +207,26 @@ public class RTree {
         }
     }
 
-    private RNode[] pickSeeds(List<Node> children) {
+    private Node[] pickSeeds(List<Node> children) {
+        // Pour ce faire, on considère chaque paire de nœuds.
+        // Pour chacune de ces paires,
+        // on calcule la superficie de l’enveloppe englobant les deux enve-loppes,
+        // moins celles des enveloppes elles-mêmes.
+        // On sélectionnera la paire qui maximise cette superficie.
+        // returns two nodes that will be used as the initial seeds for the split
         logger.debug("pickSeeds()");
-//        Node[] seeds =new Node[2];
-        RNode[] seeds =new RNode[2];
+        Node[] seeds =new Node[2];
         double maxDistance = 0.0;
         for (int i = 0; i < children.size(); i++) {
+            Envelope childiEnvelope = children.get(i).getMBR();
+            double childiEnvelopeArea = childiEnvelope.getArea();
             for (int j = i + 1 ; j < children.size(); j++) {
-                double distance = children.get(i).getMBR().distance(children.get(j).getMBR());
+                Envelope childiEnvelopeCopy = new Envelope(childiEnvelope);
+
+                Envelope childjEnvelope = children.get(j).getMBR();
+                childiEnvelopeCopy.expandToInclude(childjEnvelope);
+
+                double distance = childiEnvelopeCopy.getArea() - childiEnvelopeArea - childjEnvelope.getArea();
                 if (distance > maxDistance) {
                     maxDistance = distance;
                     seeds[0] = children.get(i);
@@ -232,7 +242,7 @@ public class RTree {
         Envelope mbr = node.getMBR();
         double area = mbr.getArea();
 
-        Envelope union = mbr;
+        Envelope union = new Envelope(mbr);
         for (Node child : children) {
             union.expandToInclude(child.getMBR());
         }
@@ -240,7 +250,7 @@ public class RTree {
         return enlargedArea - area;
     }
 
-    private Node splitLinear(Node rnode) {
+    private RNode splitLinear(Node rnode) {
         // Node Splitting
         //In order to add a new entry to a full
         //node containing M entries, it is necessary
@@ -269,7 +279,6 @@ public class RTree {
         int numChildren = rnode.getChildren().size();
         int midIndex = numChildren / 2;
 
-//        List<Node> newChildren = new ArrayList<>();
         List<Node> newChildren = new ArrayList<>();
         for (int i = midIndex; i < numChildren; i++){
             newChildren.add(rnode.getChildren().get(i));
@@ -283,10 +292,10 @@ public class RTree {
         for (int i=0; i < newNode.getChildren().size(); i++){
             newNode.getMBR().expandToInclude(newNode.getChildren().get(i).getMBR());
         }
-    return newNode;
+        return newNode;
     }
 
-    private Node chooseNode(Node rnode, MultiPolygon polygon){
+    private RNode chooseNode(Node rnode, MultiPolygon polygon){
         //  identifier le nœud
         //  pour lequel l’insertion du nouveau polygone
         //  minimisera l’augmentation du MBR
@@ -311,13 +320,18 @@ public class RTree {
         logger.debug("chooseNode()");
 
         Envelope toInsertEnvelope = polygon.getEnvelopeInternal();
+//        List<Node> rnodeChildren = rnode.getChildren();
+        if (rnode.getChildren().isEmpty() || rnode.getChildren().get(0) instanceof RLeaf) {
+            return (RNode) rnode;
+        }
         double minEnlargement = Double.POSITIVE_INFINITY;
-        Node result = null;
+        RNode result = null;
         for (Node childNode : rnode.getChildren()) {
+
             Envelope childNodeEnvelope = childNode.getMBR();
             MultiPolygon childNodePolygon = childNode.getPolygon();
             if (childNodePolygon.contains(polygon)) {
-                return childNode;
+                return (RNode) childNode;
             } else {
 //                double area = childNodeEnvelope.intersection(toInsertEnvelope).getArea();
                 // deepcopy of childNodeEnvelope:
@@ -328,12 +342,12 @@ public class RTree {
                 double enlargement = childNodeEnvelopeAreaEnlarged - childNodeEnvelopeArea;
                 if (enlargement < minEnlargement) {
                     minEnlargement = enlargement;
-                    result = childNode;
+                    result = (RNode) childNode;
                 } else if (enlargement == minEnlargement
                         && result != null
                         && (childNodeEnvelope.intersection(toInsertEnvelope).getArea()
                         < result.getMBR().intersection(toInsertEnvelope).getArea())) {
-                        result = childNode;
+                        result = (RNode) childNode;
 
                 }
             }
@@ -346,9 +360,9 @@ public class RTree {
         return root;
     }
 
-    public List<GenericNode> search(Point point) {
+    public List<RLeaf> search(Point point) {
         logger.debug("search()");
-        List<GenericNode> result = new ArrayList<>();
+        List<RLeaf> result = new ArrayList<>();
         result = searchRecursive(point
                 , root
                 , result
@@ -359,9 +373,9 @@ public class RTree {
         return result;
     }
 
-    public List<Node> searchRecursive(Point point
+    public List<RLeaf> searchRecursive(Point point
                                         , Node node
-                                        , List<Node> result
+                                        , List<RLeaf> result
                                         , int depth
                                         ) {
 
@@ -370,7 +384,7 @@ public class RTree {
             logger.debug("in RLeaf");
                 if (node.getPolygon().contains(point)) {
                     logger.debug("RLeaf contains point");
-                    result.add(node);
+                    result.add((RLeaf) node);
                 }
                 return result;
         } else {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +89,16 @@ public class RNode extends Node{
         updateMBR();
     }
 
+    @Override
+    void addChild(RNode node1) {
+
+    }
+
+    @Override
+    MultiPolygon getPolygon() {
+        return null;
+    }
+
     public void removeChild(RLeaf child) {
         logger.debug("removeChild()");
         children.remove(child);
@@ -116,11 +127,18 @@ public class RNode extends Node{
 
     @Override
     List<Node> getChildren() {
+
         return children;
+//        return (List<RNode>) children;
     }
 
     @Override
     String getLabel() {
         return null;
+    }
+
+    @Override
+    boolean isLeaf() {
+        return false;
     }
 }
