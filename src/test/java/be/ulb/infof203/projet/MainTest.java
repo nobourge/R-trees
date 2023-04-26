@@ -11,10 +11,10 @@ import org.opengis.feature.simple.SimpleFeature;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 
-class MainTest {
+public class MainTest {
 
     @Test
-    void testSearchTree() throws IOException, Exception{
+    public void testSearchTree() throws IOException, Exception{
         String fileName = "";
         SimpleFeatureCollection features = Main.getSimpleFeatureCollection(fileName);
         GeometryFactory geometryFactory = new GeometryFactory();
@@ -26,7 +26,7 @@ class MainTest {
     }
 
     @Test
-    void testSearchTreeWithInvalidMode() throws IOException {
+    public void testSearchTreeWithInvalidMode() throws IOException {
         String FileName = "";
         SimpleFeatureCollection features = Main.getSimpleFeatureCollection(FileName);
         GeometryFactory geometryFactory = new GeometryFactory();
