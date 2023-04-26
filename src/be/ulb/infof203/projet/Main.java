@@ -74,7 +74,7 @@ public class Main {
         }
     }
 
-    private static SimpleFeature searchTree(SimpleFeatureCollection allFeatures
+    public static SimpleFeature searchTree(SimpleFeatureCollection allFeatures
             , Point point
             , String mode
             , SimpleFeatureSource featureSource) throws Exception {
@@ -221,4 +221,14 @@ public class Main {
         // Now display the map
         JMapFrame.showMap(map);
     }
+
+    /*public static SimpleFeature searchTree(SimpleFeatureCollection allFeatures, Point point, String mode) throws Exception {
+        logger.debug("searchTree()");
+        SpatialIndexFeatureCollection indexedCollection = new SpatialIndexFeatureCollection(allFeatures);
+        FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2();
+        Filter filter = filterFactory.contains(filterFactory.property(allFeatures.getSchema().getGeometryDescriptor().getLocalName()), filterFactory.literal(point));
+        SimpleFeatureCollection selectedFeatures = indexedCollection.subCollection(filter);
+
+        return selectedFeatures.features().next();
+    }*/
 }
