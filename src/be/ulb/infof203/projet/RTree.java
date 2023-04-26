@@ -157,7 +157,6 @@ public class RTree {
         if (numChildren <= 1) {
             return null;
         }
-        // node
         RNode[] seeds = pickSeeds(children);
 
         RNode node1 = new RNode(Collections.singletonList(seeds[0]));
