@@ -19,9 +19,10 @@ import org.geotools.map.MapContent;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 import org.geotools.swing.JMapFrame;
-import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
@@ -132,10 +133,49 @@ public class Main {
         return target;
     }
 
+
+
+    public static void maintest(String[] args) throws IOException {
+        RTree rTree = new RTree(10, 5, 10, 5);
+
+        // Premier fichier de test
+        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection("file.shp");
+        rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
+        rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
+        rTree.addFeatureCollection(mondialFeatures, "linear", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
+
+        // Deuxième fichier de test
+        SimpleFeatureCollection batiFeatures = RTree.getSimpleFeatureCollection("file.shp");
+        rTree.addFeatureCollection(batiFeatures, "quadratic", (SimpleFeatureSource) batiFeatures.getSchema().getName());
+        rTree.addFeatureCollection(batiFeatures, "linear", (SimpleFeatureSource) batiFeatures.getSchema().getName());
+
+        // Troisième fichier de test
+        SimpleFeatureCollection coursDeauFeatures = RTree.getSimpleFeatureCollection("file.shp");
+        rTree.addFeatureCollection(coursDeauFeatures, "quadratic", (SimpleFeatureSource) coursDeauFeatures.getSchema().getName());
+        rTree.addFeatureCollection(coursDeauFeatures, "linear", (SimpleFeatureSource) coursDeauFeatures.getSchema().getName());
+
+        // Perform search tests
+        long startTime = System.currentTimeMillis();
+
+        CoordinateSequence coordinates = new CoordinateArraySequence(new Coordinate[]{new Coordinate(0, 0)});
+
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+
+        Point point = new Point(coordinates, geometryFactory);
+
+        List searchResult = (List) rTree.search(point);
+        long endTime = System.currentTimeMillis();
+        long searchTime = endTime - startTime;
+        System.out.println("Search time: " + searchTime + " ms");
+
+    }
+
+
     public static void main(String[] args) throws Exception {
+        maintest(args);
         logger.debug("main()");
-//        String filename ="resources/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
-        String filename ="resources/sh_statbel_statistical_sectors_20210101/sh_statbel_statistical_sectors_20210101.shp";
+//        //String filename ="resources/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        String filename = "be/ulb/infof203/projet/sh_statbel_statistical_sectors_20210101.shp";
         // iterative search in ms:
         // 306
         // 165
@@ -233,6 +273,22 @@ public class Main {
         // Now display the map
         JMapFrame.showMap(map);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /*public static SimpleFeature searchTree(SimpleFeatureCollection allFeatures, Point point, String mode) throws Exception {
         logger.debug("searchTree()");
