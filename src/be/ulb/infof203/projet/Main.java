@@ -140,8 +140,12 @@ public class Main {
         RTree rTree = new RTree(10, 5, 10, 5);
 
         // Premier fichier de test
+        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection(FileConst.STATBEL);
+        rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
+        rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
+        rTree.addFeatureCollection(mondialFeatures, "linear", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
         String file = "src/ressources/regions-20180101.shp";
-        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection(file);
+//        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection(file);
       //  rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
         SimpleFeatureSource featureSource = DataUtilities.source(mondialFeatures);
         rTree.addFeatureCollection(mondialFeatures, "linear", featureSource);
@@ -177,14 +181,17 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
-        maintest(args);
+//        maintest(args);
         logger.debug("main()");
-//        //String filename ="resources/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
-        String filename = "src/ressources/WB_Adm0_boundary_lines_10m.shp";
-        // iterative search in ms:
-        // 306
-        // 165
-        // rtree search:
+        GeometryBuilder gb = new GeometryBuilder();
+        Point p = gb.point(4.4, 50.8);// Belgium
+//        Point p = gb.point(152183, 167679);// Plaine
+        String filename = FileConst.STATBEL;
+
+        //util.Point p = gb.point(58.0, 47.0);// Kazakhstan
+//        String filename = FileConst.REGIONS;
+
+        logger.debug("util.Point: "+p);
 
         File file = new File(filename);
         if (!file.exists())
@@ -202,12 +209,9 @@ public class Main {
         ReferencedEnvelope global_bounds = featureSource.getBounds();
         logger.info("Global bounds: "+global_bounds);
 
-        GeometryBuilder gb = new GeometryBuilder();
-        Point p = gb.point(152183, 167679);// Plaine
-        logger.debug("util.Point: "+p);
 
-        //util.Point p = gb.point(4.4, 50.8);//
-        //util.Point p = gb.point(58.0, 47.0);
+
+
         //util.Point p = gb.point(10.6,59.9);// Oslo
 
         //util.Point p = gb.point(-70.9,-33.4);// Santiago
