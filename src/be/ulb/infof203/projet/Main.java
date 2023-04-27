@@ -142,16 +142,11 @@ public class Main {
         // Premier fichier de test
         SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection(FileConst.STATBEL);
         rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
-        rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
         rTree.addFeatureCollection(mondialFeatures, "linear", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
-        String file = "src/ressources/regions-20180101.shp";
-//        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection(file);
-      //  rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
         SimpleFeatureSource featureSource = DataUtilities.source(mondialFeatures);
-        rTree.addFeatureCollection(mondialFeatures, "linear", featureSource);
 
 //        // Deuxième fichier de test
-        SimpleFeatureCollection batiFeatures = RTree.getSimpleFeatureCollection("src/ressources/WB_Adm0_boundary_lines_10m.shp");
+        SimpleFeatureCollection batiFeatures = RTree.getSimpleFeatureCollection(FileConst.WB_COUNTRIES);
         featureSource = DataUtilities.source(batiFeatures);
         rTree.addFeatureCollection(mondialFeatures, "linear", featureSource);
         //        rTree.addFeatureCollection(batiFeatures, "quadratic", (SimpleFeatureSource) batiFeatures.getSchema().getName());
@@ -171,8 +166,8 @@ public class Main {
 
         Point point = new Point(coordinates, geometryFactory);
 
-        //List<RLeaf> searchResult = rTree.search(point);
-        //System.out.println(searchResult.toString());
+//        List<RLeaf> searchResult = rTree.search(point);
+//        System.out.println(searchResult.toString());
         long endTime = System.currentTimeMillis();
         long searchTime = endTime - startTime;
         System.out.println("Search time: " + searchTime + " ms");
