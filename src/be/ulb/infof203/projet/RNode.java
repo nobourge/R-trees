@@ -70,20 +70,25 @@ public class RNode extends Node{
     public void addChild(Node child) {
         logger.debug("addChild()");
         logger.debug("child: " + child);
-        logger.debug("child: " + child.getLabel());
+        logger.debug("child.label: " + child.getLabel());
         logger.debug("child type: " + child.getClass());
         // if child is instance of a class different from the class of the first child
         // then throw an exception
         if (!children.isEmpty()) {
+            logger.debug("children is not empty");
+            logger.debug("children list type: " + children.getClass());
+            logger.debug("children.size(): " + children.size());
+            logger.debug("children.get(0).label: " + children.get(0).getLabel());
+            logger.debug("children.get(0).getClass(): " + children.get(0).getClass());
             if (child.getClass() != children.get(0).getClass()) {
                 throw new IllegalArgumentException("Child is not of the same type as the other children");
             }
         }
         //TODO FIX Error dans RTreeTest
-        children.add(child);
+        children.add(child); // UnsupportedOperationException – the add operation is not supported by this list when
         child.setParent(this);
         showChildren();
-        updateMBR();
+        updateMBR(child);
     }
 
     private void showChildren() {
@@ -123,6 +128,18 @@ public class RNode extends Node{
         logger.debug("removeChild()");
         children.remove(child);
         updateMBR();
+    }
+    void updateMBR(Node child) {
+        logger.debug("updateMBR()");
+        Envelope childMBR = child.getMBR();
+        if (mbr == null) {
+            mbr = childMBR;
+        } else {
+            mbr.expandToInclude(childMBR);
+        }
+        logger.debug("mbr: " + mbr);
+        logger.debug("area: " + mbr.getArea());
+
     }
     void updateMBR() {
         logger.debug("updateMBR()");

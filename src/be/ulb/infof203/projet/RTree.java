@@ -26,9 +26,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Member;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,12 +71,12 @@ public class RTree {
     }
 
 
-    public RNode split(RNode node, String mode) {
+    public RNode split(RNode nodeToSplit, String mode) {
         if (mode.equals("quadratic")) {
-            return splitQuadratic(node);
+            return splitQuadratic(nodeToSplit);
         }
         else if (mode.equals("linear")) {
-            return splitLinear(node);
+            return splitLinear(nodeToSplit);
         }
         else {
             logger.error("Unknown mode: " + mode);
@@ -142,55 +140,36 @@ public class RTree {
         }
     }
 
-    private RNode splitQuadratic(RNode rnode) {
+    private RNode splitQuadratic(RNode rnodeToSplit) {
         logger.debug("splitQuadratic()");
-        List<Node> children = rnode.getChildren();
-        int numChildren = children.size();
-        if (numChildren <= 1) {
+        //
+        List<Node> childrenToSplit = rnodeToSplit.getChildren();
+        int childrenToSplitQuantity = childrenToSplit.size();
+        if (childrenToSplitQuantity <= 1) {
+            logger.error("splitQuadratic() called with less than 2 children");
             return null;
         }
         // Dans cette version, on commence par choisir deux « seeds » (pickSeeds),
         // soit deux nœuds les plus éloignés possible.
-        Node[] seeds = pickSeeds(children);
+        Node[] seeds = pickSeeds(childrenToSplit);
 
-        RNode node1 = new RNode(Collections.singletonList(seeds[0]));
-        RNode node2 = new RNode(Collections.singletonList(seeds[1]));
+//        todo : why singletonList ?
+//        RNode node1 = new RNode(Collections.singletonList(seeds[0]));
+//        RNode node2 = new RNode(Collections.singletonList(seeds[1]));
+        RNode node1 = new RNode();
+        node1.addChild(seeds[0]);
+        RNode node2 = new RNode();
+        node2.addChild(seeds[1]);
 
-        children.remove(seeds[0]);
-        children.remove(seeds[1]);
-
-        if (children.isEmpty()) {
-            return null;
-        }
+        childrenToSplit.remove(seeds[0]);
+        childrenToSplit.remove(seeds[1]);
 
         // todo: check warnings
-        while (!children.isEmpty()) {
-            if (node1.getChildren().size() + children.size() == minChildren) {
-                for (Node child : children) {
-                    node1.addChild(child);
-                }
-                children.clear();
-                break;
-            } else if (node2.getChildren().size() + children.size() == minChildren) {
-                for (Node child : children) {
-                    node2.addChild(child);
-                }
-                children.clear();
-                break;
-            }
-            double cost1 = quadraticCost(node1, children);
-            double cost2 = quadraticCost(node2, children);
+        while (!childrenToSplit.isEmpty()) {
+            pickNext(childrenToSplit, node1, node2);
 
-            if (cost1 < cost2) {
-                node1.addChild(children.remove(0));
-            } else {
-                node2.addChild(children.remove(0));
-            }
         }
-        node1.updateMBR();
-        node2.updateMBR();
-
-        Node parent = rnode.getParent();
+        Node parent = rnodeToSplit.getParent();
 
         if (parent == null) {
             parent = new RNode(new ArrayList<>());
@@ -198,14 +177,50 @@ public class RTree {
             ((RNode) parent).addChild(node2);
             return (RNode) parent;
         } else {
-            parent.removeChild(rnode);
+            parent.removeChild(rnodeToSplit);
             parent.addChild(node1);
             parent.addChild(node2);
-            if (parent.getChildren().size() > maxChildren) {
+            if (parent.getChildren().size() >= maxChildren) {
                 splitQuadratic((RNode) parent);
             }
             return null;
         }
+    }
+
+    private void pickNext(List<Node> childrenToSplit, RNode node1, RNode node2) {
+        // On choisit ensuite le nœud qui, ajouté à l’un des deux nœuds déjà choisis,
+        // maximise la différence entre les superficies des deux nœuds.
+        // On ajoute ce nœud au nœud qui maximise cette différence.
+        // On répète ce processus jusqu’à ce qu’il ne reste plus de nœuds à traiter.
+        logger.debug("pickNext()");
+        double maxDifference = Double.NEGATIVE_INFINITY;
+        Node toAdd = null;
+        RNode toAddTo = null;
+
+        for (Node child : childrenToSplit) {
+            Envelope childEnvelope = child.getMBR();
+            Envelope node1EnvelopeCopy = new Envelope(node1.getMBR());
+            node1EnvelopeCopy.expandToInclude(childEnvelope);
+            Envelope node2EnvelopeCopy = new Envelope(node2.getMBR());
+            node2EnvelopeCopy.expandToInclude(childEnvelope);
+            double node1EnvelopeArea = node1EnvelopeCopy.getArea();
+            double node2EnvelopeArea = node2EnvelopeCopy.getArea();
+            double difference1 = node1EnvelopeCopy.getArea() - node1EnvelopeArea;
+            double difference2 = node2EnvelopeCopy.getArea() - node2EnvelopeArea;
+            double difference = Math.abs(difference1 - difference2);
+            if (difference > maxDifference) {
+                maxDifference = difference;
+                toAdd = child;
+                if (difference1 > difference2) {
+                    toAddTo = node1;
+                } else {
+                    toAddTo = node2;
+                }
+            }
+        }
+        assert toAddTo != null;
+        toAddTo.addChild(toAdd);
+        childrenToSplit.remove(toAdd);
     }
 
     private Node[] pickSeeds(List<Node> children) {
@@ -414,9 +429,8 @@ public class RTree {
         try ( SimpleFeatureIterator iterator = allFeatures.features() ){
             while( iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
-                display(feature, featureSource);
-                // pause 5 seconds:
-                Thread.sleep(500);
+                display(feature, featureSource,500);
+
                 // feature has attribute MultiPolygon
                 MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry(); // getDefaultGeometry returns a Geometry Object
 //                String id = Objects.toString(feature.getAttribute("id"));
@@ -430,10 +444,7 @@ public class RTree {
                         , mode);
                 RTreeDisplayer.displayTerminal(root, 0);
                 RTreeDisplayer.display(this);
-
             }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -456,7 +467,7 @@ public class RTree {
         return allFeatures;
     }
 
-    public void display(SimpleFeature target, SimpleFeatureSource featureSource) {
+    public void display(SimpleFeature target, SimpleFeatureSource featureSource, int i) {
         GeometryBuilder gb = new GeometryBuilder();
 
         MapContent map = new MapContent();
@@ -486,6 +497,12 @@ public class RTree {
         map.addLayer(layer2);
         // Now display the map
         JMapFrame.showMap(map);
+
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }
