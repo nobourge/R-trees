@@ -11,7 +11,6 @@ import java.util.List;
 public class RLeaf extends Node {
     private static final Logger logger = LoggerFactory.getLogger(RLeaf.class);
     private MultiPolygon polygon;
-    private String label;
 
     public RLeaf(MultiPolygon polygon, String label) {
         logger.debug("RLeaf()");
@@ -24,24 +23,14 @@ public class RLeaf extends Node {
         logger.debug("label: " + label);
         logger.debug("RLeaf() done");
     }
-
-    public RLeaf(String Label) {
-        this.label = Label;
-    }
-
     public MultiPolygon getPolygon() {
         logger.debug("getPolygon()");
         return this.polygon;
     }
-
     @Override
-    List<Node> getChildren() {
-        return null;
-    }
-
-    @Override
-    String getLabel() {
-        return label;
+    public String getInfo() {
+        logger.debug("getInfo()");
+        return "RLeaf: " + label + " " + getMBR().toString();
     }
 
     @Override
@@ -50,12 +39,18 @@ public class RLeaf extends Node {
     }
 
     @Override
-    void removeChild(RNode rnode) {
-
+    List<Node> getChildren() {
+        logger.debug("getChildren()");
+        return null;
     }
 
     @Override
-    void addChild(RNode node1) {
+    public String showInfo() {
+        return "RLeaf: " + label + " " + getMBR().toString();
+    }
 
+    @Override
+    void setLabel(String label) {
+        this.label = label;
     }
 }

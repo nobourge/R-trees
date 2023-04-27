@@ -1,5 +1,7 @@
 package be.ulb.infof203.projet;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -84,11 +86,18 @@ public class Main {
         SimpleFeature target;
         RTree rTree = new RTree(4, 4, 4, 4);
 
-        rTree.addFeatureCollection(allFeatures
-        , mode
-        , featureSource);
+//        // Disable logger for displayTerminal method
+//        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+//        ch.qos.logback.classic.Logger displayLogger = loggerContext.getLogger(Main.class);
+//        displayLogger.setLevel(Level.OFF);
 
-        target = getFeatureById(allFeatures, rTree.search(point).get(0).getLabel());
+        rTree.addFeatureCollection(allFeatures
+            , mode
+            , featureSource);
+        String label = rTree.search(point).get(0).getLabel();
+        logger.info("label: "+label);
+
+        target = getFeatureById(allFeatures, label);
         // chrono stop:
         long stop = System.currentTimeMillis();
         System.out.println("Time: "+(stop-start)+" ms");
@@ -111,6 +120,9 @@ public class Main {
 
                 if (polygon != null && polygon.contains(point)) {
                     target = feature;
+                    String id = Objects.toString(feature.getID());
+
+                    logger.info("label: "+id);
                     // chrono stop:
                     long stop = System.currentTimeMillis();
                     System.out.println("Time: "+(stop-start)+" ms");
@@ -163,8 +175,8 @@ public class Main {
 //                         , r.nextInt((int) global_bounds.getMinY()
 //                                    , (int) global_bounds.getMaxY()));
 
-//        String mode = "iterative";
-        String mode = "quadratic";
+        String mode = "iterative";
+//        String mode = "quadratic";
 //        String mode = "linear";
 
         SimpleFeature target = (SimpleFeature) search(getSimpleFeatureCollection(filename)

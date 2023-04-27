@@ -1,5 +1,7 @@
 package be.ulb.infof203.projet;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -48,7 +50,7 @@ public class RTree {
         this.minDepth = minDepth;
         this.maxChildren = maxChildren;
         this.minChildren = minChildren;
-        this.root = new RNode();
+        this.root = new RNode(1);
         leafQuantity = 0;
         rNodeQuantity = 0;
         this.depth = 0;
@@ -111,9 +113,11 @@ public class RTree {
             , MultiPolygon polygon
             , String mode
                         ) {
-        logger.debug("addLeaf()");
-        logger.debug("rnode: " + rnode);
-        logger.debug("label: " + label);
+        if (rnode == getRoot()) {
+            logger.debug("addLeaf()");
+            logger.debug("label: " + label);
+        }
+        logger.debug("in rnode: " + rnode + " with label: " + label);
         if (rnode.getChildren().isEmpty() || rnode.getChildren().get(0).isLeaf()){
             logger.debug("bottom level is reached -> create leaf");
             rnode.addChild(new RLeaf(polygon, label));
@@ -123,6 +127,7 @@ public class RTree {
         else {
             logger.debug("still need to go deeper");
             RNode node = chooseNode(rnode, polygon);
+            logger.debug("node: " + node);
             RNode newNode = addLeaf(node, label, polygon, mode);
             if (newNode != null) {
                 // a split occurred in addLeaf, a new node is added at this level
@@ -149,6 +154,9 @@ public class RTree {
             logger.error("splitQuadratic() called with less than 2 children");
             return null;
         }
+//        RTreeDisplayer.displayTerminal(getRoot(),0);
+        logger.info("node " + rnodeToSplit.getLabel() + " has " + rnodeToSplit.getChildren().size() + " children, splitting");
+
         // Dans cette version, on commence par choisir deux « seeds » (pickSeeds),
         // soit deux nœuds les plus éloignés possible.
         Node[] seeds = pickSeeds(childrenToSplit);
@@ -156,9 +164,11 @@ public class RTree {
 //        todo : why singletonList ?
 //        RNode node1 = new RNode(Collections.singletonList(seeds[0]));
 //        RNode node2 = new RNode(Collections.singletonList(seeds[1]));
-        RNode node1 = new RNode();
+        RNode node1 = new RNode(getRNodeQuantity());
+        rNodeQuantity++;
         node1.addChild(seeds[0]);
-        RNode node2 = new RNode();
+        RNode node2 = new RNode(getRNodeQuantity());
+        rNodeQuantity++;
         node2.addChild(seeds[1]);
 
         childrenToSplit.remove(seeds[0]);
@@ -169,19 +179,23 @@ public class RTree {
             pickNext(childrenToSplit, node1, node2);
 
         }
-        Node parent = rnodeToSplit.getParent();
+        RNode parent = rnodeToSplit.getParent();
 
         if (parent == null) {
-            parent = new RNode(new ArrayList<>());
-            ((RNode) parent).addChild(node1);
-            ((RNode) parent).addChild(node2);
-            return (RNode) parent;
+            // we are splitting the root
+            parent = new RNode(new ArrayList<>(), getRNodeQuantity());
+            rNodeQuantity++;
+            // parent is the new root
+            this.root = parent;
+            (parent).addChild(node1);
+            (parent).addChild(node2);
+            return parent;
         } else {
             parent.removeChild(rnodeToSplit);
             parent.addChild(node1);
             parent.addChild(node2);
             if (parent.getChildren().size() >= maxChildren) {
-                splitQuadratic((RNode) parent);
+                splitQuadratic(parent);
             }
             return null;
         }
@@ -232,10 +246,11 @@ public class RTree {
         // returns two nodes that will be used as the initial seeds for the split
         logger.debug("pickSeeds()");
         Node[] seeds =new Node[2];
-        double maxDistance = 0.0;
+        double maxDistance = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < children.size(); i++) {
             Envelope childiEnvelope = children.get(i).getMBR();
             double childiEnvelopeArea = childiEnvelope.getArea();
+            logger.debug("childiEnvelopeArea: " + childiEnvelopeArea);
             for (int j = i + 1 ; j < children.size(); j++) {
                 Envelope childiEnvelopeCopy = new Envelope(childiEnvelope);
 
@@ -251,10 +266,18 @@ public class RTree {
                     seeds[0] = children.get(i);
                     seeds[1] = children.get(j);
                 }
+                else {
+                    logger.debug("i: " + i);
+                    logger.debug("j: " + j);
+                    logger.debug("distance: " + distance + " is not greater than maxDistance: " + maxDistance);
+                }
             }
         }
-        logger.debug("seeds[0]: " + seeds[0]);
-        logger.debug("seeds[1]: " + seeds[1]);
+        if (seeds[0] == null || seeds[1] == null) {
+            logger.error("seeds[0] or seeds[1] is null");
+        }
+        logger.debug("seeds[0]: " + seeds[0].getLabel());
+        logger.debug("seeds[1]: " + seeds[1].getLabel());
         return seeds;
     }
 
@@ -305,7 +328,8 @@ public class RTree {
             newChildren.add(rnode.getChildren().get(i));
         }
         rnode.getChildren().subList(midIndex, numChildren).clear();
-        RNode newNode = new RNode(newChildren);
+        RNode newNode = new RNode(newChildren, getRNodeQuantity());
+        rNodeQuantity++;
 
         for (int i=0; i < rnode.getChildren().size();i++){
             rnode.getMBR().expandToInclude(rnode.getChildren().get(i).getMBR());
@@ -349,8 +373,8 @@ public class RTree {
         for (Node childNode : rnode.getChildren()) {
 
             Envelope childNodeEnvelope = childNode.getMBR();
-            MultiPolygon childNodePolygon = childNode.getPolygon();
-            if (childNodePolygon.contains(polygon)) {
+//            MultiPolygon childNodePolygon = childNode.getPolygon();
+            if (childNodeEnvelope.contains(polygon.getEnvelopeInternal())) {
                 return (RNode) childNode;
             } else {
                 // deepcopy of childNodeEnvelope:
@@ -401,11 +425,12 @@ public class RTree {
         logger.debug("search() recursive");
         if (node.isLeaf()) {
             logger.debug("in RLeaf");
-                if (node.getPolygon().contains(point)) {
-                    logger.debug("RLeaf contains point");
-                    result.add((RLeaf) node);
-                }
-                return result;
+            RLeaf leaf = (RLeaf) node;
+            if (leaf.getPolygon().contains(point)) {
+                logger.debug("RLeaf contains point");
+                result.add((leaf));
+            }
+            return result;
         } else {
             logger.debug("in RNode");
             logger.debug("search() recursive depth: " + depth);
@@ -429,21 +454,20 @@ public class RTree {
         try ( SimpleFeatureIterator iterator = allFeatures.features() ){
             while( iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
-                display(feature, featureSource,500);
-
+//                display(feature, featureSource,500);
                 // feature has attribute MultiPolygon
                 MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry(); // getDefaultGeometry returns a Geometry Object
-//                String id = Objects.toString(feature.getAttribute("id"));
-//                String id = Objects.toString(feature.getAttribute("STRING"));
-//                String id = Objects.toString(feature.getAttribute.getID());
                 String id = Objects.toString(feature.getID());
                 logger.debug("id: " + id);
                 addLeaf(root
                         , id
                         , polygon
                         , mode);
-                RTreeDisplayer.displayTerminal(root, 0);
-                RTreeDisplayer.display(this);
+
+//                RTreeDisplayer.displayTerminal(root, 0);
+                logger.debug("Represenation done ");
+                // Re-enable logger for subsequent method calls
+//                RTreeDisplayer.display(this);
             }
         }
     }

@@ -1,12 +1,9 @@
 package be.ulb.infof203.projet;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.MultiPolygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,52 +22,23 @@ public class RNode extends Node{
     private static final Logger logger = LoggerFactory.getLogger(RNode.class);
 
     //list of children of type RNode or RLeaf:
-//    private List<RNode> children;
-//    private List<RLeaf> children;
     private List<Node> children;
 
-
-//    public RNode(List<Node> children) {
-//    public RNode(List<RLeaf> childrenRleaf) {
-//        logger.debug("RNode()");
-//
-//        this.childrenRLeaf = childrenRleaf;
-//        updateMBR();
-//    }
-    public RNode() {
+    public RNode(int label) {
         logger.debug("RNode()");
-//        childrenRnode = new ArrayList<RNode>();
-//        childrenRLeaf = new ArrayList<RLeaf>();
-          children = new ArrayList<Node>();
+        setLabel(String.valueOf(label));
+          children = new ArrayList<>();
     }
 
-    public RNode(List<Node> nodes) {
+    public RNode(List<Node> nodes, int label) {
         logger.debug("RNode()");
-//        childrenRnode = rNodes;
-//        childrenRLeaf = new ArrayList<RLeaf>();
-//        children = new ArrayList<Node>();
+        setLabel(String.valueOf(label));
         children = nodes;
         updateMBR();
     }
-
-    //    public void addChild(RNode child) {
-//        logger.debug("addChild()");
-//        children = new ArrayList<RNode>();
-//
-//        children.add(child);
-//        child.setParent(this);
-//        updateMBR();
-//    }
-//    public void addChild(RLeaf child) {
-//        logger.debug("addChild()");
-//        childrenRLeaf.add(child);
-//        child.setParent(this);
-//        updateMBR();
-//    }
     public void addChild(Node child) {
         logger.debug("addChild()");
         logger.debug("child: " + child);
-        logger.debug("child.label: " + child.getLabel());
         logger.debug("child type: " + child.getClass());
         // if child is instance of a class different from the class of the first child
         // then throw an exception
@@ -78,7 +46,6 @@ public class RNode extends Node{
             logger.debug("children is not empty");
             logger.debug("children list type: " + children.getClass());
             logger.debug("children.size(): " + children.size());
-            logger.debug("children.get(0).label: " + children.get(0).getLabel());
             logger.debug("children.get(0).getClass(): " + children.get(0).getClass());
             if (child.getClass() != children.get(0).getClass()) {
                 throw new IllegalArgumentException("Child is not of the same type as the other children");
@@ -95,35 +62,14 @@ public class RNode extends Node{
         logger.debug("showChildren()");
         for (Node child : children) {
             logger.debug("child: " + child);
-            logger.debug("child: " + child.getLabel());
             logger.debug("child type: " + child.getClass());
         }
     }
-//    public List<RNode> getChildrenRnode() {
-//        logger.debug("getChildren()");
-//        return childrenRnode;
-//    }
-//    public List<RLeaf> getChildren() {
-//        logger.debug("getChildren()");
-//        return childrenRLeaf;
-//    }
-
     public void removeChild(RNode child) {
         logger.debug("removeChild()");
         children.remove(child);
         updateMBR();
     }
-
-    @Override
-    void addChild(RNode node1) {
-
-    }
-
-    @Override
-    MultiPolygon getPolygon() {
-        return null;
-    }
-
     public void removeChild(RLeaf child) {
         logger.debug("removeChild()");
         children.remove(child);
@@ -157,26 +103,47 @@ public class RNode extends Node{
         logger.debug("mbr: " + mbr);
         logger.debug("area: " + mbr.getArea());
     }
-
-
-    public void setMBR(Envelope childEnvelope) {
-        this.mbr = childEnvelope;
-    }
-
     @Override
     List<Node> getChildren() {
-        logger.debug("getChildren()");
+//        logger.debug("getChildren()");
         return children;
-//        return (List<RNode>) children;
-    }
-
-    @Override
-    String getLabel() {
-        return null;
     }
 
     @Override
     boolean isLeaf() {
         return false;
+    }
+
+    @Override
+    String getInfo() {
+//        logger.debug("getInfo()");
+        StringBuilder info = new StringBuilder();
+        for (Node child : children) {
+            info.append(child.getInfo());
+        }
+        return info.toString();
+    }
+
+    int getChildQuantity() {
+        return children.size();
+    }
+
+    @Override
+    String showInfo() {
+        StringBuilder info = new StringBuilder();
+        info.append("RNode: ");
+        info.append(getLabel());
+//        info.append("children: ");
+//        info.append(children.size()).append(": ");
+//        for (Node child : children) {
+//            info.append(",");
+//            info.append(child.showInfo());
+//        }
+        return info.toString();
+    }
+
+    @Override
+    void setLabel(String label) {
+        this.label = label;
     }
 }

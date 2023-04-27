@@ -1,5 +1,7 @@
 package be.ulb.infof203.projet;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +22,16 @@ public class RTreeDisplayer {
     }
 
     public static void displayTerminal(Node node, int level) {
+        // disable logger :
+
         if (level == 0) {
             logger.debug("displayTerminal()");
             System.out.println("Tree representation:");
+            // Disable logger for displayTerminal method
+            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+            ch.qos.logback.classic.Logger displayLogger = loggerContext.getLogger(RTreeDisplayer.class);
+            displayLogger.setLevel(Level.OFF);
+
         }
         if (node == null) {
             return;
@@ -30,10 +39,8 @@ public class RTreeDisplayer {
         for (int i = 0; i < level; i++) {
             System.out.print("  ");
         }
-        if (node.isLeaf()) {
-            System.out.println(node.getLabel());
-        } else {
-            System.out.println(node.getChildren().size());
+        System.out.println(node.showInfo());
+        if (!node.isLeaf()) {
             for (Node child : node.getChildren()) {
                 displayTerminal(child, level + 1);
             }
@@ -60,7 +67,7 @@ public class RTreeDisplayer {
 
 
         if (node.isLeaf()) {
-            String nodeLine = node.getLabel(); // get string representation of the node
+            String nodeLine = node.getInfo(); // get string representation of the node
             lines.add(nodeLine);
             return lines;
         }
