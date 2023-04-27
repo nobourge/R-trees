@@ -4,11 +4,11 @@ xmlns="http://maven.apache.org/POM/4.0.0"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 <modelVersion>4.0.0</modelVersion>
-<groupId>org.geotools.tutorial</groupId>
-<artifactId>quickstart</artifactId>
+<groupId>be.ulb.projet</groupId>
+<artifactId>R-trees</artifactId>
 <version>0.0.1-SNAPSHOT</version>
 <packaging>jar</packaging>
-<name>GeoTools Quickstart</name>
+<name>Rtree search</name>
 <url>http://maven.apache.org</url>
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,6 +37,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
         <groupId>org.geotools</groupId>
         <artifactId>gt-swing</artifactId>
         <version>${geotools.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>RELEASE</version>
+        <scope>test</scope>
     </dependency>
 </dependencies>
 <repositories>

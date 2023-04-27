@@ -10,7 +10,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="R-trees" target="1.8" />
+      <module name="quickstart" target="1.8" />
+      <module name="rtree" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

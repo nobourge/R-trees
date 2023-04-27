@@ -15,7 +15,7 @@ eX document
 
 Package filecontents Warning: This package is obsolete. Disabling it and
 (filecontents)                passing control to the filecontents environment
-(filecontents)                defined by the LaTeX kernel.
+(filecontents)                dedebugd by the LaTeX kernel.
 
 )
 
@@ -355,9 +355,9 @@ File report.hst not found.
 ) (C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2022-09-22 v7.00t Hypertext links for LaTeX
 
-(C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+(C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/generic/kvdedebugkeys\kvdedebug
 keys.sty
-Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+Package: kvdedebugkeys 2019-12-19 v1.6 Dedebug keys (HO)
 )
 (C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
@@ -407,7 +407,7 @@ Package hyperref Info: Link nesting OFF on input line 4167.
 Package hyperref Info: Hyper index ON on input line 4170.
 Package hyperref Info: Plain pages OFF on input line 4177.
 Package hyperref Info: Backreferencing OFF on input line 4182.
-Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Implicit mode ON; LaTeX internals rededebugd.
 \stockwidth=\dimen180
 \stockheight=\dimen181
 Package hyperref Info: Bookmarks ON on input line 4410.
@@ -736,7 +736,7 @@ Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:51: LaTeX Error: Command \algorithmicindent already defined.
+ty:51: LaTeX Error: Command \algorithmicindent already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -764,7 +764,7 @@ If that doesn't work, type  X <return>  to quit.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:66: LaTeX Error: Command \algorithmicrequire already defined.
+ty:66: LaTeX Error: Command \algorithmicrequire already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -779,7 +779,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:67: LaTeX Error: Command \algorithmicensure already defined.
+ty:67: LaTeX Error: Command \algorithmicensure already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -794,7 +794,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:68: LaTeX Error: Command \algorithmiccomment already defined.
+ty:68: LaTeX Error: Command \algorithmiccomment already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -809,7 +809,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:69: LaTeX Error: Command \algorithmicend already defined.
+ty:69: LaTeX Error: Command \algorithmicend already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -824,7 +824,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:70: LaTeX Error: Command \algorithmicif already defined.
+ty:70: LaTeX Error: Command \algorithmicif already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -839,7 +839,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:71: LaTeX Error: Command \algorithmicthen already defined.
+ty:71: LaTeX Error: Command \algorithmicthen already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -854,7 +854,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:72: LaTeX Error: Command \algorithmicelse already defined.
+ty:72: LaTeX Error: Command \algorithmicelse already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -869,7 +869,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:75: LaTeX Error: Command \algorithmicfor already defined.
+ty:75: LaTeX Error: Command \algorithmicfor already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -884,7 +884,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:76: LaTeX Error: Command \algorithmicforall already defined.
+ty:76: LaTeX Error: Command \algorithmicforall already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -899,7 +899,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:77: LaTeX Error: Command \algorithmicdo already defined.
+ty:77: LaTeX Error: Command \algorithmicdo already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -914,7 +914,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:79: LaTeX Error: Command \algorithmicwhile already defined.
+ty:79: LaTeX Error: Command \algorithmicwhile already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -929,7 +929,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:81: LaTeX Error: Command \algorithmicloop already defined.
+ty:81: LaTeX Error: Command \algorithmicloop already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -944,7 +944,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:83: LaTeX Error: Command \algorithmicrepeat already defined.
+ty:83: LaTeX Error: Command \algorithmicrepeat already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -959,7 +959,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:84: LaTeX Error: Command \algorithmicuntil already defined.
+ty:84: LaTeX Error: Command \algorithmicuntil already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -974,7 +974,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:86: LaTeX Error: Command \algorithmicreturn already defined.
+ty:86: LaTeX Error: Command \algorithmicreturn already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -989,7 +989,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:229: LaTeX Error: Command \algorithmic already defined.
+ty:229: LaTeX Error: Command \algorithmic already dedebugd.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -1236,14 +1236,14 @@ Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 [4] [5] [6] [7]
-report.tex:250: Undefined control sequence.
+report.tex:250: Undedebugd control sequence.
 l.250     \underlined
                      {(cf. énoncé)}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
+and I'll forget about whatever was undedebugd.
 
 report.tex:254: Missing $ inserted.
 <inserted text> 

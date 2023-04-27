@@ -23,10 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import org.locationtech.jts.geom.MultiPolygon;
 
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
 
@@ -39,7 +39,6 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 
 import java.util.Objects;
-import java.util.Random;
 
 import org.geotools.swing.JMapFrame;
 
@@ -55,26 +54,24 @@ public class SinglePoint {
      */
 //    private static final Log LOGGER = org.geotools.util.logging.Logging.getLogger(SinglePoint.class);
 //    private static final Logger LOGGER = org.geotools.util.logging.LogbackLoggerFactory(SinglePoint.class);
-    private static final Logger LOGGER = LoggerFactory.getLogger(SinglePoint.class);
+    private static final Logger logger = LoggerFactory.getLogger(SinglePoint.class);
 
      public static void main(String[] args) throws Exception {
-         LOGGER.debug("main()");
+         logger.debug("main()");
 
         // display a data store file chooser dialog for shapefiles
 //        String filename="src/be/ulb/infof203/projet/WB_countries_Admin0_10m.shp";
-
-        //Decompress zip file to get the right file
-//        String filename ="src/ressources/sh_statbel_statistical_sectors_20210101.shp";
-        String filename ="resources/sh_statbel_statistical_sectors_20210101.shp";
-
+        String filename ="resources/sh_statbel_statistical_sectors_20210101/sh_statbel_statistical_sectors_20210101.shp";
         //String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
 
         File file = new File(filename);
         if (!file.exists())
             throw new RuntimeException("Shapefile does not exist.");
 
-        FileDataStore store = FileDataStoreFinder.getDataStore(file);
-        SimpleFeatureSource featureSource = store.getFeatureSource();
+        // create a map content and add our shapefile to it
+        FileDataStore store = FileDataStoreFinder.getDataStore(file); // store is a ShapefileDataStore
+         //
+        SimpleFeatureSource featureSource = store.getFeatureSource(); // featureSource is a ShapefileFeatureSource
 
         SimpleFeatureCollection all_features=featureSource.getFeatures();
 
@@ -85,21 +82,20 @@ public class SinglePoint {
 //        Random r = new Random();
 
         GeometryBuilder gb = new GeometryBuilder();
-        LOGGER.info("Global bounds: "+global_bounds);
+        logger.info("Global bounds: "+global_bounds);
         Point p = gb.point(152183, 167679);// Plaine
-         LOGGER.info("Point: "+p);
-         LOGGER.debug("Point: "+p);
+         logger.debug("util.Point: "+p);
 
-        //Point p = gb.point(4.4, 50.8);//
-        //Point p = gb.point(58.0, 47.0);
-        //Point p = gb.point(10.6,59.9);// Oslo
+        //util.Point p = gb.point(4.4, 50.8);//
+        //util.Point p = gb.point(58.0, 47.0);
+        //util.Point p = gb.point(10.6,59.9);// Oslo
 
-        //Point p = gb.point(-70.9,-33.4);// Santiago
-        //Point p = gb.point(169.2, -52.5);//NZ
+        //util.Point p = gb.point(-70.9,-33.4);// Santiago
+        //util.Point p = gb.point(169.2, -52.5);//NZ
 
-        //Point p = gb.point(172.97365198326708, 1.8869725782923172);
+        //util.Point p = gb.point(172.97365198326708, 1.8869725782923172);
 
-//        Point p = gb.point(r.nextInt((int) global_bounds.getMinX()
+//        util.Point p = gb.point(r.nextInt((int) global_bounds.getMinX()
 //                                   , (int) global_bounds.getMaxX())
 //                         , r.nextInt((int) global_bounds.getMinY()
 //                                    , (int) global_bounds.getMaxY()));
@@ -122,7 +118,7 @@ public class SinglePoint {
         }
 
         if (target == null)
-            System.out.println("Point not in any polygon!");
+            System.out.println("util.Point not in any polygon!");
 
         else {
             for(Property prop: target.getProperties()) {
@@ -146,7 +142,7 @@ public class SinglePoint {
         // Add target polygon
         collection.add(target);
 
-        // Add Point
+        // Add util.Point
         Polygon c= gb.circle(p.getX(), p.getY(), all_features.getBounds().getWidth()/200,10);
         featureBuilder.add(c);
         collection.add(featureBuilder.buildFeature(null));
