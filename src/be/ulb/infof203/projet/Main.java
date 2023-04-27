@@ -2,6 +2,7 @@ package be.ulb.infof203.projet;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -139,20 +140,23 @@ public class Main {
         RTree rTree = new RTree(10, 5, 10, 5);
 
         // Premier fichier de test
-        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection("file.shp");
-        rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
-        rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
-        rTree.addFeatureCollection(mondialFeatures, "linear", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
+        String file = "src/ressources/regions-20180101.shp";
+        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection(file);
+      //  rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
+        SimpleFeatureSource featureSource = DataUtilities.source(mondialFeatures);
+        rTree.addFeatureCollection(mondialFeatures, "linear", featureSource);
 
-        // Deuxième fichier de test
-        SimpleFeatureCollection batiFeatures = RTree.getSimpleFeatureCollection("file.shp");
-        rTree.addFeatureCollection(batiFeatures, "quadratic", (SimpleFeatureSource) batiFeatures.getSchema().getName());
-        rTree.addFeatureCollection(batiFeatures, "linear", (SimpleFeatureSource) batiFeatures.getSchema().getName());
-
-        // Troisième fichier de test
-        SimpleFeatureCollection coursDeauFeatures = RTree.getSimpleFeatureCollection("file.shp");
-        rTree.addFeatureCollection(coursDeauFeatures, "quadratic", (SimpleFeatureSource) coursDeauFeatures.getSchema().getName());
-        rTree.addFeatureCollection(coursDeauFeatures, "linear", (SimpleFeatureSource) coursDeauFeatures.getSchema().getName());
+//        // Deuxième fichier de test
+        SimpleFeatureCollection batiFeatures = RTree.getSimpleFeatureCollection("src/ressources/WB_Adm0_boundary_lines_10m.shp");
+        featureSource = DataUtilities.source(batiFeatures);
+        rTree.addFeatureCollection(mondialFeatures, "linear", featureSource);
+        //        rTree.addFeatureCollection(batiFeatures, "quadratic", (SimpleFeatureSource) batiFeatures.getSchema().getName());
+//        rTree.addFeatureCollection(batiFeatures, "linear", (SimpleFeatureSource) batiFeatures.getSchema().getName());
+//
+//        // Troisième fichier de test
+//        SimpleFeatureCollection coursDeauFeatures = RTree.getSimpleFeatureCollection("file.shp");
+//        rTree.addFeatureCollection(coursDeauFeatures, "quadratic", (SimpleFeatureSource) coursDeauFeatures.getSchema().getName());
+//        rTree.addFeatureCollection(coursDeauFeatures, "linear", (SimpleFeatureSource) coursDeauFeatures.getSchema().getName());
 
         // Perform search tests
         long startTime = System.currentTimeMillis();
@@ -163,7 +167,8 @@ public class Main {
 
         Point point = new Point(coordinates, geometryFactory);
 
-        List searchResult = (List) rTree.search(point);
+        //List<RLeaf> searchResult = rTree.search(point);
+        //System.out.println(searchResult.toString());
         long endTime = System.currentTimeMillis();
         long searchTime = endTime - startTime;
         System.out.println("Search time: " + searchTime + " ms");
@@ -175,7 +180,7 @@ public class Main {
         maintest(args);
         logger.debug("main()");
 //        //String filename ="resources/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
-        String filename = "be/ulb/infof203/projet/sh_statbel_statistical_sectors_20210101.shp";
+        String filename = "src/ressources/WB_Adm0_boundary_lines_10m.shp";
         // iterative search in ms:
         // 306
         // 165
