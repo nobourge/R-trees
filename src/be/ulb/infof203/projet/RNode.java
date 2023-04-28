@@ -3,6 +3,8 @@ package be.ulb.infof203.projet;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,11 @@ public class RNode extends Node{
     private List<Node> children;
 
     public RNode(int label) {
+
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger nologger = loggerContext.getLogger(RNode.class);
+        nologger.setLevel(Level.OFF);
+
         logger.debug("RNode()");
         setLabel(String.valueOf(label));
           children = new ArrayList<>();
@@ -35,6 +42,15 @@ public class RNode extends Node{
         setLabel(String.valueOf(label));
         children = nodes;
         updateMBR();
+    }
+
+    public double getMBRAreaIfExpandedToInclude(Envelope envelope) {
+        logger.debug("getMBRArea()");
+        logger.debug("envelope: " + envelope);
+        logger.debug("envelope.getArea(): " + envelope.getArea());
+        Envelope mbrCopy = new Envelope(mbr);
+        mbrCopy.expandToInclude(envelope);
+        return mbrCopy.getArea();
     }
     public void addChild(Node child) {
         logger.debug("addChild()");

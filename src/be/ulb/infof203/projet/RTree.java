@@ -1,7 +1,5 @@
 package be.ulb.infof203.projet;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -23,6 +21,8 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 
 import java.awt.*;
 import java.io.File;
@@ -54,6 +54,10 @@ public class RTree {
         leafQuantity = 0;
         rNodeQuantity = 0;
         this.depth = 0;
+
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger nologger = loggerContext.getLogger(RTree.class);
+        nologger.setLevel(Level.OFF);
     }
 
     public int getRNodeQuantity() {
@@ -130,7 +134,7 @@ public class RTree {
             logger.debug("node: " + node);
             RNode newNode = addLeaf(node, label, polygon, mode);
             if (newNode != null) {
-                // a split occurred in addLeaf, a new node is added at this level
+                logger.info("a split occurred, a new node is added at this level");
                 rnode.getChildren().add(newNode);
                 rNodeQuantity++;
                 logger.debug("rNodeQuantity: " + rNodeQuantity);
@@ -147,7 +151,6 @@ public class RTree {
 
     private RNode splitQuadratic(RNode rnodeToSplit) {
         logger.debug("splitQuadratic()");
-        //
         List<Node> childrenToSplit = rnodeToSplit.getChildren();
         int childrenToSplitQuantity = childrenToSplit.size();
         if (childrenToSplitQuantity <= 1) {
@@ -160,10 +163,6 @@ public class RTree {
         // Dans cette version, on commence par choisir deux « seeds » (pickSeeds),
         // soit deux nœuds les plus éloignés possible.
         Node[] seeds = pickSeeds(childrenToSplit);
-
-//        todo : why singletonList ?
-//        RNode node1 = new RNode(Collections.singletonList(seeds[0]));
-//        RNode node2 = new RNode(Collections.singletonList(seeds[1]));
         RNode node1 = new RNode(getRNodeQuantity());
         rNodeQuantity++;
         node1.addChild(seeds[0]);
@@ -201,11 +200,65 @@ public class RTree {
         }
     }
 
+    private RNode chooseNode(RNode rnode, MultiPolygon polygon){
+        //  identifie le nœud
+        //  pour lequel l’insertion du nouveau polygone
+        //  minimisera l’augmentation du MBR
+
+        // Algorithm ChooseLeaf.
+        // Select a leaf node
+        //in which to place a new index entry E.
+        //CLl. [Initialize.]
+        // Set N to be the root
+        //node.
+        //CL2. [Leaf check.]
+        // If N is a leaf, return N.
+        //CL3. [Choose subtree.]
+        // If Af is not a leaf,
+        //let F be the entry in N whose rectangle F.I needs least enlargement to
+        //include E.I. Resolve ties by choosing
+        //the entry with the rectangle of smallest area.
+
+        //CL4. [Descend until a leaf is reached.]
+        // Set N to be the child node pointed to by F.p
+        // and repeat from CL2
+        logger.debug("chooseNode()");
+
+        Envelope toInsertEnvelope = polygon.getEnvelopeInternal();
+        if (rnode.getChildren().isEmpty() || rnode.getChildren().get(0) instanceof RLeaf) {
+            return rnode;
+        }
+        double minEnlargement = Double.POSITIVE_INFINITY;
+        RNode result = null;
+        for (Node childNode : rnode.getChildren()) {
+            Envelope childNodeEnvelope = childNode.getMBR();
+            if (childNodeEnvelope.contains(polygon.getEnvelopeInternal())) {
+                return (RNode) childNode;
+            } else {
+                // deepcopy of childNodeEnvelope:
+                Envelope childNodeEnvelopeExpanded = new Envelope(childNodeEnvelope);
+                childNodeEnvelopeExpanded.expandToInclude(toInsertEnvelope);
+                double childNodeEnvelopeArea = childNodeEnvelope.getArea();
+                double childNodeEnvelopeAreaEnlarged = childNodeEnvelopeExpanded.getArea();
+                double enlargement = childNodeEnvelopeAreaEnlarged - childNodeEnvelopeArea;
+                if (enlargement < minEnlargement) {
+                    minEnlargement = enlargement;
+                    result = (RNode) childNode;
+                } else if (enlargement == minEnlargement
+                        && result != null
+                        && (childNodeEnvelope.intersection(toInsertEnvelope).getArea()
+                        < result.getMBR().intersection(toInsertEnvelope).getArea())) {
+                    result = (RNode) childNode;
+                }
+            }
+        }
+        return result;
+    }
     private void pickNext(List<Node> childrenToSplit, RNode node1, RNode node2) {
-        // On choisit ensuite le nœud qui, ajouté à l’un des deux nœuds déjà choisis,
-        // maximise la différence entre les superficies des deux nœuds.
-        // On ajoute ce nœud au nœud qui maximise cette différence.
-        // On répète ce processus jusqu’à ce qu’il ne reste plus de nœuds à traiter.
+        //     On choisit le nœud qui, ajouté à l’un des deux nœuds déjà choisis,
+        //     maximise la différence entre les superficies des deux nœuds.
+        //     On ajoute ce nœud au nœud qui maximise cette différence.
+        //     On répète ce processus jusqu’à ce qu’il ne reste plus de nœuds à traiter.
         logger.debug("pickNext()");
         double maxDifference = Double.NEGATIVE_INFINITY;
         Node toAdd = null;
@@ -213,14 +266,13 @@ public class RTree {
 
         for (Node child : childrenToSplit) {
             Envelope childEnvelope = child.getMBR();
-            Envelope node1EnvelopeCopy = new Envelope(node1.getMBR());
-            node1EnvelopeCopy.expandToInclude(childEnvelope);
-            Envelope node2EnvelopeCopy = new Envelope(node2.getMBR());
-            node2EnvelopeCopy.expandToInclude(childEnvelope);
-            double node1EnvelopeArea = node1EnvelopeCopy.getArea();
-            double node2EnvelopeArea = node2EnvelopeCopy.getArea();
-            double difference1 = node1EnvelopeCopy.getArea() - node1EnvelopeArea;
-            double difference2 = node2EnvelopeCopy.getArea() - node2EnvelopeArea;
+            double node1mbrArea = node1.getMBRArea();
+            double node2mbrArea = node2.getMBRArea();
+            double node1ExpandedArea = node1.getMBRAreaIfExpandedToInclude(childEnvelope);
+            double node2ExpandedArea = node2.getMBRAreaIfExpandedToInclude(childEnvelope);
+
+            double difference1 = node1mbrArea - node1ExpandedArea;
+            double difference2 = node2mbrArea - node2ExpandedArea;
             double difference = Math.abs(difference1 - difference2);
             if (difference > maxDifference) {
                 maxDifference = difference;
@@ -255,9 +307,11 @@ public class RTree {
                 Envelope childiEnvelopeCopy = new Envelope(childiEnvelope);
 
                 Envelope childjEnvelope = children.get(j).getMBR();
+                double childjEnvelopeArea = childjEnvelope.getArea();
                 childiEnvelopeCopy.expandToInclude(childjEnvelope);
+                double childiEnvelopeCopyArea = childiEnvelopeCopy.getArea();
 
-                double distance = childiEnvelopeCopy.getArea() - childiEnvelopeArea - childjEnvelope.getArea();
+                double distance = childiEnvelopeCopyArea - childiEnvelopeArea - childjEnvelopeArea;
                 if (distance > maxDistance) {
                     logger.debug("i: " + i);
                     logger.debug("j: " + j);
@@ -281,20 +335,7 @@ public class RTree {
         return seeds;
     }
 
-    private  double quadraticCost(RNode node, List<Node> children) {
-        logger.debug("quadraticCost()");
-        Envelope mbr = node.getMBR();
-        double area = mbr.getArea();
-
-        Envelope union = new Envelope(mbr);
-        for (Node child : children) {
-            union.expandToInclude(child.getMBR());
-        }
-        double enlargedArea = union.getArea();
-        return enlargedArea - area;
-    }
-
-    private RNode splitLinear(Node rnode) {
+    private RNode splitLinear(RNode rnode) {
         // Node Splitting
         //In order to add a new entry to a full
         //node containing M entries, it is necessary
@@ -323,81 +364,21 @@ public class RTree {
         int numChildren = rnode.getChildren().size();
         int midIndex = numChildren / 2;
 
-        List<Node> newChildren = new ArrayList<>();
+        List<Node> newNodeChildren = new ArrayList<>();
+        logger.info("adding children second half to new node");
         for (int i = midIndex; i < numChildren; i++){
-            newChildren.add(rnode.getChildren().get(i));
+            newNodeChildren.add(rnode.getChildren().get(i));
         }
         rnode.getChildren().subList(midIndex, numChildren).clear();
-        RNode newNode = new RNode(newChildren, getRNodeQuantity());
+        RNode newNode = new RNode(newNodeChildren, getRNodeQuantity());
         rNodeQuantity++;
 
-        for (int i=0; i < rnode.getChildren().size();i++){
-            rnode.getMBR().expandToInclude(rnode.getChildren().get(i).getMBR());
-        }
-        for (int i=0; i < newNode.getChildren().size(); i++){
-            newNode.getMBR().expandToInclude(newNode.getChildren().get(i).getMBR());
-        }
+        rnode.updateMBR();
+        newNode.updateMBR();
         return newNode;
     }
 
-    private RNode chooseNode(Node rnode, MultiPolygon polygon){
-        //  identifier le nœud
-        //  pour lequel l’insertion du nouveau polygone
-        //  minimisera l’augmentation du MBR
 
-        // Algorithm ChooseLeaf.
-        // Select a leaf node
-        //in which to place a new index entry E.
-        //CLl. [Initialize.]
-        // Set N to be the root
-        //node.
-        //CL2. [Leaf check.]
-        // If N is a leaf, return N.
-        //CL3. [Choose subtree.]
-        // If Af is not a leaf,
-        //let F be the entry in N whose rectangle F.I needs least enlargement to
-        //include E.I. Resolve ties by choosing
-        //the entry with the rectangle of smallest area.
-
-        //CL4. [Descend until a leaf is reached.]
-        // Set N to be the child node pointed to by F.p
-        // and repeat from CL2
-        logger.debug("chooseNode()");
-
-        Envelope toInsertEnvelope = polygon.getEnvelopeInternal();
-        if (rnode.getChildren().isEmpty() || rnode.getChildren().get(0) instanceof RLeaf) {
-            return (RNode) rnode;
-        }
-        double minEnlargement = Double.POSITIVE_INFINITY;
-        RNode result = null;
-        for (Node childNode : rnode.getChildren()) {
-
-            Envelope childNodeEnvelope = childNode.getMBR();
-//            MultiPolygon childNodePolygon = childNode.getPolygon();
-            if (childNodeEnvelope.contains(polygon.getEnvelopeInternal())) {
-                return (RNode) childNode;
-            } else {
-                // deepcopy of childNodeEnvelope:
-                Envelope childNodeEnvelopeExpanded = new Envelope(childNodeEnvelope);
-                childNodeEnvelopeExpanded.expandToInclude(toInsertEnvelope);
-                double childNodeEnvelopeArea = childNodeEnvelope.getArea();
-                double childNodeEnvelopeAreaEnlarged = childNodeEnvelopeExpanded.getArea();
-                double enlargement = childNodeEnvelopeAreaEnlarged - childNodeEnvelopeArea;
-                if (enlargement < minEnlargement) {
-                    minEnlargement = enlargement;
-                    result = (RNode) childNode;
-                } else if (enlargement == minEnlargement
-                        && result != null
-                        && (childNodeEnvelope.intersection(toInsertEnvelope).getArea()
-                        < result.getMBR().intersection(toInsertEnvelope).getArea())) {
-                        result = (RNode) childNode;
-
-                }
-            }
-        }
-
-        return result;
-    }
 
     public Node getRoot() {
         return root;

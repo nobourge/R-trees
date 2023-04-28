@@ -1,16 +1,12 @@
 package be.ulb.infof203.projet;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.collection.ListFeatureCollection;
-import org.geotools.data.collection.SpatialIndexFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.GeometryBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -26,8 +22,6 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,11 +40,8 @@ public class Main {
 
         // create a map content and add our shapefile to it
         FileDataStore store = FileDataStoreFinder.getDataStore(file); // store is a ShapefileDataStore
-        //
         SimpleFeatureSource featureSource = store.getFeatureSource(); // featureSource is a ShapefileFeatureSource
-
         SimpleFeatureCollection all_features = featureSource.getFeatures();
-
         store.dispose(); // close the store
 
         ReferencedEnvelope global_bounds = featureSource.getBounds();
@@ -59,11 +50,56 @@ public class Main {
         return all_features;
     }
 
+    public static int getFeaturePreviousIndex(String id) {
+        String featureId = id;
+        int startIndex = featureId.lastIndexOf(".") + 1; // Add 1 to exclude the dot
+        int endIndex = featureId.length();
+        int index = Integer.parseInt(featureId.substring(startIndex, endIndex));
+        System.out.println(index);
+        return index-1;
+    }
     public static SimpleFeature getFeatureById(SimpleFeatureCollection collection, String id) throws IOException {
-        SpatialIndexFeatureCollection indexedCollection = new SpatialIndexFeatureCollection(collection);
-        FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2();
-        Filter filter = filterFactory.equals(filterFactory.property("ID"), filterFactory.literal(id));
-        return indexedCollection.subCollection(filter).features().next();
+//        SpatialIndexFeatureCollection indexedCollection = new SpatialIndexFeatureCollection(collection);
+//        FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2();
+//        Filter filter = filterFactory.equals(filterFactory.property("ID"), filterFactory.literal(id));
+//        Filter filter = filterFactory.equals(filterFactory.property("NAME"), filterFactory.literal(id));
+//        SimpleFeatureIterator iterator = indexedCollection.subCollection(filter).features();
+        SimpleFeatureIterator iterator = collection.features();
+        SimpleFeature feature = null;
+        int index = getFeaturePreviousIndex(id);
+//        try {
+////            while (iterator.hasNext()) {
+////            iterator.skip(1);
+//            while (iterator.hasNext()) {
+//                feature = iterator.next();
+//                System.out.println(feature.getID());
+//                if (feature.getID().equals(id)) {
+//                    break;
+//                }
+//            }
+//        } finally {
+//            iterator.close();
+//        }
+
+        try {
+            int count = 0;
+            while (count < index && iterator.hasNext()) {
+                iterator.next();
+                count++;
+            }
+
+            while (iterator.hasNext()) {
+                feature = iterator.next();
+                System.out.println(feature.getID());
+                if (feature.getID().equals(id)) {
+                    break;
+                }
+            }
+        } finally {
+            iterator.close();
+        }
+        logger.debug("feature: " + feature.getID());
+        return feature;
     }
     public static Object search(SimpleFeatureCollection all_features, Point point, String mode, SimpleFeatureSource featureSource) throws Exception {
         logger.debug("search()");
@@ -79,6 +115,7 @@ public class Main {
     }
 
     public static SimpleFeature searchTree(SimpleFeatureCollection allFeatures
+//    public static MultiPolygon searchTree(SimpleFeatureCollection allFeatures
             , Point point
             , String mode
             , SimpleFeatureSource featureSource) throws Exception {
@@ -96,13 +133,16 @@ public class Main {
         rTree.addFeatureCollection(allFeatures
             , mode
             , featureSource);
-        String label = rTree.search(point).get(0).getLabel();
+        RLeaf targetLeaf = rTree.search(point).get(0);
+//        String label = rTree.search(point).get(0).getLabel();
+        String label = targetLeaf.getLabel();
         logger.info("label: "+label);
 
         target = getFeatureById(allFeatures, label);
         // chrono stop:
         long stop = System.currentTimeMillis();
         System.out.println("Time: "+(stop-start)+" ms");
+//        return targetLeaf.getPolygon();
         return target;
 
     }
@@ -171,7 +211,6 @@ public class Main {
         long endTime = System.currentTimeMillis();
         long searchTime = endTime - startTime;
         System.out.println("Search time: " + searchTime + " ms");
-
     }
 
 
@@ -179,11 +218,8 @@ public class Main {
 //        maintest(args);
         logger.debug("main()");
         GeometryBuilder gb = new GeometryBuilder();
-        Point p = gb.point(4.4, 50.8);// Belgium
-//        Point p = gb.point(152183, 167679);// Plaine
+        Point p = PointConst.STATBEL;
         String filename = FileConst.STATBEL;
-
-        //util.Point p = gb.point(58.0, 47.0);// Kazakhstan
 //        String filename = FileConst.REGIONS;
 
         logger.debug("util.Point: "+p);
@@ -204,30 +240,14 @@ public class Main {
         ReferencedEnvelope global_bounds = featureSource.getBounds();
         logger.info("Global bounds: "+global_bounds);
 
-
-
-
-        //util.Point p = gb.point(10.6,59.9);// Oslo
-
-        //util.Point p = gb.point(-70.9,-33.4);// Santiago
-        //util.Point p = gb.point(169.2, -52.5);//NZ
-
-        //util.Point p = gb.point(172.97365198326708, 1.8869725782923172);
-
-//        util.Point p = gb.point(r.nextInt((int) global_bounds.getMinX()
-//                                   , (int) global_bounds.getMaxX())
-//                         , r.nextInt((int) global_bounds.getMinY()
-//                                    , (int) global_bounds.getMaxY()));
-
-        String mode = "iterative";
-//        String mode = "quadratic";
+//        String mode = "iterative";
+        String mode = "quadratic";
 //        String mode = "linear";
 
         SimpleFeature target = (SimpleFeature) search(getSimpleFeatureCollection(filename)
                                                     , p
                                                     , mode
                                                     , featureSource);
-
         if (target == null)
             System.out.println("util.Point not in any polygon!");
 

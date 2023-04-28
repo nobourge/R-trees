@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2022.12.7)  28 APR 2023 16:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2022.12.7)  28 APR 2023 17:23
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1217,8 +1217,8 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-report.tex:186: Undefined control sequence.
-l.186     \subsubsubsection
+report.tex:190: Undefined control sequence.
+l.190     \subsubsubsection
                            {Algorithme:}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1227,26 +1227,26 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-report.tex:190: LaTeX Error: Environment algorithm undefined.
+report.tex:194: LaTeX Error: Environment algorithm undefined.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.190     \begin{algorithm}
+l.194     \begin{algorithm}
                            
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-report.tex:191: Package caption Error: \caption outside float.
+report.tex:195: Package caption Error: \caption outside float.
 
 See the caption package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.191         \caption
+l.195         \caption
                       {Split quadratic}
 If you do not understand this error, please take a closer look
 at the documentation of the `caption' package, especially the
@@ -1254,21 +1254,22 @@ section about errors.
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
+[4]
 
-report.tex:229: LaTeX Error: \begin{document} ended by \end{algorithm}.
+report.tex:233: LaTeX Error: \begin{document} ended by \end{algorithm}.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.229     \end{algorithm}
+l.233     \end{algorithm}
                          
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
-report.tex:231: Undefined control sequence.
-l.231     \subsubsubsection
+report.tex:235: Undefined control sequence.
+l.235     \subsubsubsection
                            {Description}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1276,8 +1277,8 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-report.tex:233: Undefined control sequence.
-l.233     \subsubsubsection
+report.tex:237: Undefined control sequence.
+l.237     \subsubsubsection
                            {Complexité}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1285,9 +1286,8 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[4]
-report.tex:235: Undefined control sequence.
-l.235     \subsubsubsection
+report.tex:239: Undefined control sequence.
+l.239     \subsubsubsection
                            {Mise en oeuvre en Java }
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1296,33 +1296,33 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-report.tex:255: LaTeX Error: There's no line here to end.
+report.tex:259: LaTeX Error: There's no line here to end.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.255     \newline
+l.259     \newline
                   
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-report.tex:256: LaTeX Error: There's no line here to end.
+report.tex:260: LaTeX Error: There's no line here to end.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.256     \newline
+l.260     \newline
                   
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
-report.tex:258: Undefined control sequence.
-l.258     \subsubsubsection
+report.tex:262: Undefined control sequence.
+l.262     \subsubsubsection
                            {Algorithme:}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1331,26 +1331,26 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-report.tex:262: LaTeX Error: Environment algorithm undefined.
+report.tex:266: LaTeX Error: Environment algorithm undefined.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.262     \begin{algorithm}
+l.266     \begin{algorithm}
                            
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-report.tex:263: Package caption Error: \caption outside float.
+report.tex:267: Package caption Error: \caption outside float.
 
 See the caption package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.263         \caption
+l.267         \caption
                       {Split Linear}
 If you do not understand this error, please take a closer look
 at the documentation of the `caption' package, especially the
@@ -1359,25 +1359,25 @@ Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 260--264
+Underfull \hbox (badness 10000) in paragraph at lines 264--268
 
  []
 
 
-report.tex:284: LaTeX Error: \begin{document} ended by \end{algorithm}.
+report.tex:288: LaTeX Error: \begin{document} ended by \end{algorithm}.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.284     \end{algorithm}
+l.288     \end{algorithm}
                          
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
-report.tex:287: Undefined control sequence.
-l.287     \subsubsubsection
+report.tex:291: Undefined control sequence.
+l.291     \subsubsubsection
                            {Description}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1385,8 +1385,8 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-report.tex:289: Undefined control sequence.
-l.289     \subsubsubsection
+report.tex:293: Undefined control sequence.
+l.293     \subsubsubsection
                            {Complexité}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1394,8 +1394,8 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-report.tex:291: Undefined control sequence.
-l.291     \subsubsubsection
+report.tex:295: Undefined control sequence.
+l.295     \subsubsubsection
                            {Mise en oeuvre en Java }
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1403,8 +1403,8 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-report.tex:301: Undefined control sequence.
-l.301     \subsubsubsection
+report.tex:305: Undefined control sequence.
+l.305     \subsubsubsection
                            {Tests de variation de profondeur d'une R-tree}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1413,14 +1413,14 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 [5]
-<img/TIME MAX DEPTH.png, id=55, 461.92575pt x 305.34074pt>
+<img/TIME MAX DEPTH.png, id=141, 461.92575pt x 305.34074pt>
 File: img/TIME MAX DEPTH.png Graphic file (type png)
 <use img/TIME MAX DEPTH.png>
-Package pdftex.def Info: img/TIME MAX DEPTH.png  used on input line 323.
+Package pdftex.def Info: img/TIME MAX DEPTH.png  used on input line 327.
 (pdftex.def)             Requested size: 328.82707pt x 217.36652pt.
  [6 <./img/TIME MAX DEPTH.png>] [7] [8]
-report.tex:352: Undefined control sequence.
-l.352     \underlined
+report.tex:356: Undefined control sequence.
+l.356     \underlined
                      {(cf. énoncé)}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1429,23 +1429,14 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 [9] (D:/bourg\Documents\GitHub\R-trees\auxil\report.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `report.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `report.out':
-(rerunfilecheck)             Before: D41D8CD98F00B204E9800998ECF8427E;0
-(rerunfilecheck)             After:  06C1F8417FE99231857BDBEA0433DCEE;3058.
+Package rerunfilecheck Info: File `report.out' has not changed.
+(rerunfilecheck)             Checksum: 06C1F8417FE99231857BDBEA0433DCEE;3058.
  ) 
 Here is how much of TeX's memory you used:
- 19424 strings out of 475380
- 313141 string characters out of 2776772
- 840118 words of memory out of 3000000
- 40450 multiletter control sequences out of 15000+600000
+ 19445 strings out of 475380
+ 313508 string characters out of 2776772
+ 840581 words of memory out of 3000000
+ 40471 multiletter control sequences out of 15000+600000
  486090 words of font info for 68 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  69i,9n,86p,1197b,1110s stack positions out of 10000i,1000n,20000p,200000b,80000s
@@ -1465,10 +1456,10 @@ ourg/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C
 :/Users/bourg/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr1
 0.pfb><C:/Users/bourg/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
 /cm/cmsy10.pfb>
-Output written on D:/bourg\Documents\GitHub\R-trees\out\report.pdf (9 pages, 16
-0795 bytes).
+Output written on D:/bourg\Documents\GitHub\R-trees\out\report.pdf (9 pages, 17
+2376 bytes).
 PDF statistics:
- 409 PDF objects out of 1000 (max. 8388607)
+ 491 PDF objects out of 1000 (max. 8388607)
  36 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 166 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,5 +1,7 @@
 package be.ulb.infof203.projet;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.slf4j.Logger;
@@ -13,6 +15,12 @@ public class RLeaf extends Node {
     private MultiPolygon polygon;
 
     public RLeaf(MultiPolygon polygon, String label) {
+
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger nologger = loggerContext.getLogger(RLeaf.class);
+        nologger.setLevel(Level.OFF);
+
+
         logger.debug("RLeaf()");
         this.polygon = polygon;
 
