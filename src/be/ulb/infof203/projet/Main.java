@@ -59,28 +59,9 @@ public class Main {
         return index-1;
     }
     public static SimpleFeature getFeatureById(SimpleFeatureCollection collection, String id) throws IOException {
-//        SpatialIndexFeatureCollection indexedCollection = new SpatialIndexFeatureCollection(collection);
-//        FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2();
-//        Filter filter = filterFactory.equals(filterFactory.property("ID"), filterFactory.literal(id));
-//        Filter filter = filterFactory.equals(filterFactory.property("NAME"), filterFactory.literal(id));
-//        SimpleFeatureIterator iterator = indexedCollection.subCollection(filter).features();
         SimpleFeatureIterator iterator = collection.features();
         SimpleFeature feature = null;
         int index = getFeaturePreviousIndex(id);
-//        try {
-////            while (iterator.hasNext()) {
-////            iterator.skip(1);
-//            while (iterator.hasNext()) {
-//                feature = iterator.next();
-//                System.out.println(feature.getID());
-//                if (feature.getID().equals(id)) {
-//                    break;
-//                }
-//            }
-//        } finally {
-//            iterator.close();
-//        }
-
         try {
             int count = 0;
             while (count < index && iterator.hasNext()) {
@@ -115,7 +96,6 @@ public class Main {
     }
 
     public static SimpleFeature searchTree(SimpleFeatureCollection allFeatures
-//    public static MultiPolygon searchTree(SimpleFeatureCollection allFeatures
             , Point point
             , String mode
             , SimpleFeatureSource featureSource) throws Exception {
@@ -124,17 +104,10 @@ public class Main {
         long start = System.currentTimeMillis();
         SimpleFeature target;
         RTree rTree = new RTree(4, 4, 4, 4);
-
-//        // Disable logger for displayTerminal method
-//        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-//        ch.qos.logback.classic.Logger displayLogger = loggerContext.getLogger(Main.class);
-//        displayLogger.setLevel(Level.OFF);
-
         rTree.addFeatureCollection(allFeatures
             , mode
             , featureSource);
         RLeaf targetLeaf = rTree.search(point).get(0);
-//        String label = rTree.search(point).get(0).getLabel();
         String label = targetLeaf.getLabel();
         logger.info("label: "+label);
 
@@ -142,9 +115,7 @@ public class Main {
         // chrono stop:
         long stop = System.currentTimeMillis();
         System.out.println("Time: "+(stop-start)+" ms");
-//        return targetLeaf.getPolygon();
         return target;
-
     }
 
     public static SimpleFeature searchIterative(SimpleFeatureCollection all_features, Point point){
@@ -152,18 +123,13 @@ public class Main {
         // chrono start:
         long start = System.currentTimeMillis();
         SimpleFeature target=null;
-
         try ( SimpleFeatureIterator iterator = all_features.features() ){
             while( iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
-
                 MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
-
-
                 if (polygon != null && polygon.contains(point)) {
                     target = feature;
                     String id = Objects.toString(feature.getID());
-
                     logger.info("label: "+id);
                     // chrono stop:
                     long stop = System.currentTimeMillis();
@@ -173,9 +139,6 @@ public class Main {
         }
         return target;
     }
-
-
-
     public static void maintest(String[] args) throws IOException {
         RTree rTree = new RTree(10, 5, 10, 5);
 
@@ -212,8 +175,6 @@ public class Main {
         long searchTime = endTime - startTime;
         System.out.println("Search time: " + searchTime + " ms");
     }
-
-
     public static void main(String[] args) throws Exception {
 //        maintest(args);
         logger.debug("main()");
@@ -221,13 +182,10 @@ public class Main {
         Point p = PointConst.STATBEL;
         String filename = FileConst.STATBEL;
 //        String filename = FileConst.REGIONS;
-
         logger.debug("util.Point: "+p);
-
         File file = new File(filename);
         if (!file.exists())
             throw new RuntimeException("Shapefile does not exist.");
-
         // create a map content and add our shapefile to it
         FileDataStore store = FileDataStoreFinder.getDataStore(file); // store is a ShapefileDataStore
         //
@@ -241,9 +199,8 @@ public class Main {
         logger.info("Global bounds: "+global_bounds);
 
 //        String mode = "iterative";
-        String mode = "quadratic";
-//        String mode = "linear";
-
+//        String mode = "quadratic";
+        String mode = "linear";
         SimpleFeature target = (SimpleFeature) search(getSimpleFeatureCollection(filename)
                                                     , p
                                                     , mode
@@ -297,30 +254,4 @@ public class Main {
         // Now display the map
         JMapFrame.showMap(map);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*public static SimpleFeature searchTree(SimpleFeatureCollection allFeatures, Point point, String mode) throws Exception {
-        logger.debug("searchTree()");
-        SpatialIndexFeatureCollection indexedCollection = new SpatialIndexFeatureCollection(allFeatures);
-        FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2();
-        Filter filter = filterFactory.contains(filterFactory.property(allFeatures.getSchema().getGeometryDescriptor().getLocalName()), filterFactory.literal(point));
-        SimpleFeatureCollection selectedFeatures = indexedCollection.subCollection(filter);
-
-        return selectedFeatures.features().next();
-    }*/
 }
