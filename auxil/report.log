@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2022.12.7)  20 MAR 2023 12:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2022.12.7)  28 APR 2023 16:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -15,7 +15,7 @@ eX document
 
 Package filecontents Warning: This package is obsolete. Disabling it and
 (filecontents)                passing control to the filecontents environment
-(filecontents)                dedebugd by the LaTeX kernel.
+(filecontents)                defined by the LaTeX kernel.
 
 )
 
@@ -355,9 +355,9 @@ File report.hst not found.
 ) (C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2022-09-22 v7.00t Hypertext links for LaTeX
 
-(C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/generic/kvdedebugkeys\kvdedebug
+(C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
 keys.sty
-Package: kvdedebugkeys 2019-12-19 v1.6 Dedebug keys (HO)
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
 )
 (C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
@@ -407,7 +407,7 @@ Package hyperref Info: Link nesting OFF on input line 4167.
 Package hyperref Info: Hyper index ON on input line 4170.
 Package hyperref Info: Plain pages OFF on input line 4177.
 Package hyperref Info: Backreferencing OFF on input line 4182.
-Package hyperref Info: Implicit mode ON; LaTeX internals rededebugd.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 \stockwidth=\dimen180
 \stockheight=\dimen181
 Package hyperref Info: Bookmarks ON on input line 4410.
@@ -736,7 +736,7 @@ Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:51: LaTeX Error: Command \algorithmicindent already dedebugd.
+ty:51: LaTeX Error: Command \algorithmicindent already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -764,7 +764,7 @@ If that doesn't work, type  X <return>  to quit.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:66: LaTeX Error: Command \algorithmicrequire already dedebugd.
+ty:66: LaTeX Error: Command \algorithmicrequire already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -779,7 +779,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:67: LaTeX Error: Command \algorithmicensure already dedebugd.
+ty:67: LaTeX Error: Command \algorithmicensure already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -794,7 +794,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:68: LaTeX Error: Command \algorithmiccomment already dedebugd.
+ty:68: LaTeX Error: Command \algorithmiccomment already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -809,7 +809,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:69: LaTeX Error: Command \algorithmicend already dedebugd.
+ty:69: LaTeX Error: Command \algorithmicend already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -824,7 +824,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:70: LaTeX Error: Command \algorithmicif already dedebugd.
+ty:70: LaTeX Error: Command \algorithmicif already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -839,7 +839,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:71: LaTeX Error: Command \algorithmicthen already dedebugd.
+ty:71: LaTeX Error: Command \algorithmicthen already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -854,7 +854,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:72: LaTeX Error: Command \algorithmicelse already dedebugd.
+ty:72: LaTeX Error: Command \algorithmicelse already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -869,7 +869,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:75: LaTeX Error: Command \algorithmicfor already dedebugd.
+ty:75: LaTeX Error: Command \algorithmicfor already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -884,7 +884,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:76: LaTeX Error: Command \algorithmicforall already dedebugd.
+ty:76: LaTeX Error: Command \algorithmicforall already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -899,7 +899,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:77: LaTeX Error: Command \algorithmicdo already dedebugd.
+ty:77: LaTeX Error: Command \algorithmicdo already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -914,7 +914,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:79: LaTeX Error: Command \algorithmicwhile already dedebugd.
+ty:79: LaTeX Error: Command \algorithmicwhile already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -929,7 +929,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:81: LaTeX Error: Command \algorithmicloop already dedebugd.
+ty:81: LaTeX Error: Command \algorithmicloop already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -944,7 +944,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:83: LaTeX Error: Command \algorithmicrepeat already dedebugd.
+ty:83: LaTeX Error: Command \algorithmicrepeat already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -959,7 +959,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:84: LaTeX Error: Command \algorithmicuntil already dedebugd.
+ty:84: LaTeX Error: Command \algorithmicuntil already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -974,7 +974,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:86: LaTeX Error: Command \algorithmicreturn already dedebugd.
+ty:86: LaTeX Error: Command \algorithmicreturn already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -989,7 +989,7 @@ or  <return>  to continue without it.
 
 
 C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.s
-ty:229: LaTeX Error: Command \algorithmic already dedebugd.
+ty:229: LaTeX Error: Command \algorithmic already defined.
                Or name \end... illegal, see p.192 of the manual.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -1108,26 +1108,26 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \openout8 = `report.toc'.
 
  [2]
-report.tex:107: Missing $ inserted.
+report.tex:131: Missing $ inserted.
 <inserted text> 
                 $
-l.107         \Omega
+l.131         \Omega
                     {\displaystyle (\vert V\vert +\vert E\vert )}
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-report.tex:108: Missing $ inserted.
+report.tex:132: Missing $ inserted.
 <inserted text> 
                 $
-l.108 
+l.132 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-report.tex:108: Missing } inserted.
+report.tex:132: Missing } inserted.
 <inserted text> 
                 }
-l.108 
+l.132 
       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -1135,10 +1135,10 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-report.tex:108: Extra }, or forgotten \endgroup.
+report.tex:132: Extra }, or forgotten \endgroup.
 \par ...m \@noitemerr {\@@par }\fi \else {\@@par }
                                                   \fi 
-l.108 
+l.132 
       
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1146,16 +1146,16 @@ you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-report.tex:110: Missing $ inserted.
+report.tex:134: Missing $ inserted.
 <inserted text> 
                 $
-l.110             {\displaystyle
+l.134             {\displaystyle
                                  {\mathcal {O}}(\vert V\vert +\vert E\vert )}
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-report.tex:110: Extra }, or forgotten $.
-l.110 ...athcal {O}}(\vert V\vert +\vert E\vert )}
+report.tex:134: Extra }, or forgotten $.
+l.134 ...athcal {O}}(\vert V\vert +\vert E\vert )}
                                                   
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1163,54 +1163,18 @@ you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-report.tex:111: Missing $ inserted.
+report.tex:135: Missing $ inserted.
 <inserted text> 
                 $
-l.111 
+l.135 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-report.tex:111: Missing } inserted.
+report.tex:135: Missing } inserted.
 <inserted text> 
                 }
-l.111 
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-report.tex:122: Missing $ inserted.
-<inserted text> 
-                $
-l.122             {\displaystyle
-                                 2\vert E\vert +{\mathcal {O}}(\vert V\vert )}
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-report.tex:122: Extra }, or forgotten $.
-l.122 ...rt E\vert +{\mathcal {O}}(\vert V\vert )}
-                                                  
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-report.tex:123: Missing $ inserted.
-<inserted text> 
-                $
-l.123 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-report.tex:123: Missing } inserted.
-<inserted text> 
-                }
-l.123 
+l.135 
       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -1221,95 +1185,290 @@ my insertion and my current dilemma will both disappear.
 (C:\Users\bourg\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
 File: lstlang1.sty 2020/03/24 1.8d listings language file
 )
-[3]
+report.tex:157: Undefined control sequence.
+l.157     \subsubsubsection
+                           {Introduction}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
 
-report.tex:138: LaTeX Error: There's no line here to end.
+report.tex:160: Undefined control sequence.
+l.160     \subsubsubsection
+                           {Description}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 160--162
+
+ []
+
+report.tex:166: Undefined control sequence.
+l.166     \subsubsubsection
+                           {Complexité}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+report.tex:186: Undefined control sequence.
+l.186     \subsubsubsection
+                           {Algorithme:}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+report.tex:190: LaTeX Error: Environment algorithm undefined.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.138     \begin
-                {lstlisting}[language=java]
+l.190     \begin{algorithm}
+                           
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
-[4] [5] [6] [7]
-report.tex:250: Undedebugd control sequence.
-l.250     \underlined
+
+report.tex:191: Package caption Error: \caption outside float.
+
+See the caption package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.191         \caption
+                      {Split quadratic}
+If you do not understand this error, please take a closer look
+at the documentation of the `caption' package, especially the
+section about errors.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+report.tex:229: LaTeX Error: \begin{document} ended by \end{algorithm}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.229     \end{algorithm}
+                         
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+report.tex:231: Undefined control sequence.
+l.231     \subsubsubsection
+                           {Description}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+report.tex:233: Undefined control sequence.
+l.233     \subsubsubsection
+                           {Complexité}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+[4]
+report.tex:235: Undefined control sequence.
+l.235     \subsubsubsection
+                           {Mise en oeuvre en Java }
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+report.tex:255: LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.255     \newline
+                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+report.tex:256: LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.256     \newline
+                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+report.tex:258: Undefined control sequence.
+l.258     \subsubsubsection
+                           {Algorithme:}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+report.tex:262: LaTeX Error: Environment algorithm undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.262     \begin{algorithm}
+                           
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+report.tex:263: Package caption Error: \caption outside float.
+
+See the caption package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.263         \caption
+                      {Split Linear}
+If you do not understand this error, please take a closer look
+at the documentation of the `caption' package, especially the
+section about errors.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 260--264
+
+ []
+
+
+report.tex:284: LaTeX Error: \begin{document} ended by \end{algorithm}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.284     \end{algorithm}
+                         
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+report.tex:287: Undefined control sequence.
+l.287     \subsubsubsection
+                           {Description}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+report.tex:289: Undefined control sequence.
+l.289     \subsubsubsection
+                           {Complexité}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+report.tex:291: Undefined control sequence.
+l.291     \subsubsubsection
+                           {Mise en oeuvre en Java }
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+report.tex:301: Undefined control sequence.
+l.301     \subsubsubsection
+                           {Tests de variation de profondeur d'une R-tree}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+[5]
+<img/TIME MAX DEPTH.png, id=55, 461.92575pt x 305.34074pt>
+File: img/TIME MAX DEPTH.png Graphic file (type png)
+<use img/TIME MAX DEPTH.png>
+Package pdftex.def Info: img/TIME MAX DEPTH.png  used on input line 323.
+(pdftex.def)             Requested size: 328.82707pt x 217.36652pt.
+ [6 <./img/TIME MAX DEPTH.png>] [7] [8]
+report.tex:352: Undefined control sequence.
+l.352     \underlined
                      {(cf. énoncé)}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undedebugd.
+and I'll forget about whatever was undefined.
 
-report.tex:254: Missing $ inserted.
-<inserted text> 
-                $
-l.254 ...A_New_Heuristic_for_Fast_Vertex_Coloring}
-                                                  
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
+[9] (D:/bourg\Documents\GitHub\R-trees\auxil\report.aux)
 
-report.tex:254: Double subscript.
-<argument> ...9_Wave_Function_Collapse_Coloring_A_
-                                                  New_Heuristic_for_Fast_Ver...
-l.254 ...A_New_Heuristic_for_Fast_Vertex_Coloring}
-                                                  
-I treat `x_1_2' essentially like `x_1{}_2'.
-
-report.tex:254: Missing $ inserted.
-<inserted text> 
-                $
-l.254 ...A_New_Heuristic_for_Fast_Vertex_Coloring}
-                                                  
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
 
-Overfull \hbox (1.68874pt too wide) in paragraph at lines 261--262
-[]\T1/cmr/m/n/10 Preuve du Lemme : [][]https://math.stackexchange.com/questions
-/4430669/proof-suggestion-for-the-chromatic-
- []
+Package rerunfilecheck Warning: File `report.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
 
-[8] (D:/bourg\Documents\GitHub\R-trees\auxil\report.aux)
-Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: 1DB007B75A1D40FF82EE55C8F2B1D953;4531.
+Package rerunfilecheck Info: Checksums for `report.out':
+(rerunfilecheck)             Before: D41D8CD98F00B204E9800998ECF8427E;0
+(rerunfilecheck)             After:  06C1F8417FE99231857BDBEA0433DCEE;3058.
  ) 
 Here is how much of TeX's memory you used:
- 19408 strings out of 475380
- 312932 string characters out of 2776772
- 838804 words of memory out of 3000000
- 40431 multiletter control sequences out of 15000+600000
- 483106 words of font info for 64 fonts, out of 8000000 for 9000
+ 19424 strings out of 475380
+ 313141 string characters out of 2776772
+ 840118 words of memory out of 3000000
+ 40450 multiletter control sequences out of 15000+600000
+ 486090 words of font info for 68 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  69i,9n,86p,1197b,1110s stack positions out of 10000i,1000n,20000p,200000b,80000s
- <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm
-0900.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
-0\eccc0900.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
-/dpi600\ecbx1000.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
-pen/ec/dpi600\ecbx1200.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour
-/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/
-ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fon
-ts/pk/ljfour/jknappen/ec/dpi600\ecrm1728.pk> <C:\Users\bourg\AppData\Local\MiKT
-eX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk><C:/Users/bourg/AppData/Local
-/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/bourg/AppD
-ata/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/bo
-urg/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/
-Users/bourg/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10
-.pfb>
-Output written on D:/bourg\Documents\GitHub\R-trees\out\report.pdf (8 pages, 15
-3371 bytes).
+ <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti
+1000.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
+0\ecrm0900.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
+/dpi600\eccc0900.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
+pen/ec/dpi600\eccc1000.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/ljfour
+/jknappen/ec/dpi600\ecrm0800.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fonts/pk/
+ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\bourg\AppData\Local\MiKTeX\fon
+ts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\bourg\AppData\Local\MiKT
+eX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\bourg\AppData\Loca
+l\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\bourg\AppDat
+a\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1728.pk> <C:\Users\bourg\
+AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk><C:/Users/b
+ourg/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C
+:/Users/bourg/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr1
+0.pfb><C:/Users/bourg/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
+/cm/cmsy10.pfb>
+Output written on D:/bourg\Documents\GitHub\R-trees\out\report.pdf (9 pages, 16
+0795 bytes).
 PDF statistics:
- 500 PDF objects out of 1000 (max. 8388607)
- 46 named destinations out of 1000 (max. 500000)
- 249 words of extra memory for PDF output out of 10000 (max. 10000000)
-
- 500000)
- 249 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 409 PDF objects out of 1000 (max. 8388607)
+ 36 named destinations out of 1000 (max. 500000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
