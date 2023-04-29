@@ -8,7 +8,9 @@ public class PointConst {
     static GeometryBuilder gb = new GeometryBuilder();
 
 //  Plaine
+
     public static final Point STATBEL = gb.point(152183, 167679);// Plaine;
+    public static final Point WB_COUNTRIES = gb.point(4.4, 50.8);// Belgium;
 
 //    Point p = gb.point(4.4, 50.8);// Belgium
 

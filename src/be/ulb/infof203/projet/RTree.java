@@ -173,7 +173,6 @@ public class RTree {
         childrenToSplit.remove(seeds[0]);
         childrenToSplit.remove(seeds[1]);
 
-        // todo: check warnings
         while (!childrenToSplit.isEmpty()) {
             pickNext(childrenToSplit, node1, node2);
 

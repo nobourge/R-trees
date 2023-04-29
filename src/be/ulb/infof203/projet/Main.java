@@ -143,13 +143,13 @@ public class Main {
         RTree rTree = new RTree(10, 5, 10, 5);
 
         // Premier fichier de test
-        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection(FileConst.STATBEL);
+        SimpleFeatureCollection mondialFeatures = RTree.getSimpleFeatureCollection(FileConst.WB_BOUNDARY_LINES);
         rTree.addFeatureCollection(mondialFeatures, "quadratic", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
         rTree.addFeatureCollection(mondialFeatures, "linear", (SimpleFeatureSource) mondialFeatures.getSchema().getName());
         SimpleFeatureSource featureSource = DataUtilities.source(mondialFeatures);
 
 //        // Deuxième fichier de test
-        SimpleFeatureCollection batiFeatures = RTree.getSimpleFeatureCollection(FileConst.WB_COUNTRIES);
+        SimpleFeatureCollection batiFeatures = RTree.getSimpleFeatureCollection(FileConst.WB_BOUNDARY_LINES);
         featureSource = DataUtilities.source(batiFeatures);
         rTree.addFeatureCollection(mondialFeatures, "linear", featureSource);
         //        rTree.addFeatureCollection(batiFeatures, "quadratic", (SimpleFeatureSource) batiFeatures.getSchema().getName());
@@ -176,11 +176,12 @@ public class Main {
         System.out.println("Search time: " + searchTime + " ms");
     }
     public static void main(String[] args) throws Exception {
+        //Décommentez pour lancer les test
 //        maintest(args);
         logger.debug("main()");
         GeometryBuilder gb = new GeometryBuilder();
-        Point p = PointConst.STATBEL;
-        String filename = FileConst.STATBEL;
+        Point p = PointConst.WB_COUNTRIES;
+        String filename = FileConst.WB_COUNTRIES;
 //        String filename = FileConst.REGIONS;
         logger.debug("util.Point: "+p);
         File file = new File(filename);
@@ -188,7 +189,6 @@ public class Main {
             throw new RuntimeException("Shapefile does not exist.");
         // create a map content and add our shapefile to it
         FileDataStore store = FileDataStoreFinder.getDataStore(file); // store is a ShapefileDataStore
-        //
         SimpleFeatureSource featureSource = store.getFeatureSource(); // featureSource is a ShapefileFeatureSource
 
         SimpleFeatureCollection all_features=featureSource.getFeatures();
@@ -199,8 +199,8 @@ public class Main {
         logger.info("Global bounds: "+global_bounds);
 
 //        String mode = "iterative";
-//        String mode = "quadratic";
-        String mode = "linear";
+        String mode = "quadratic";
+  //      String mode = "linear";
         SimpleFeature target = (SimpleFeature) search(getSimpleFeatureCollection(filename)
                                                     , p
                                                     , mode
